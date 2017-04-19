@@ -3,9 +3,58 @@
 <meta charset="utf-8">
 <head>
   <title>INFO 3300 Project 2 </title>
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600" rel="stylesheet">
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="http://d3js.org/topojson.v2.min.js"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
   <style>
+    .mid{
+    padding-left:160px;
+  }
+  .block { 
+    /*border: solid white 1px; */
+    display: inline-block;
+    margin: auto;
+  }
+  body { 
+    margin-left: auto;
+    margin-right: auto;
+    font-size:10px; 
+    font-family: 'Source Sans Pro',sans-serif;
+    background-color: #ffffff;
+  }
+
+  div.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 90px;
+    height: auto;
+    padding: 7px;
+    font: 12px sans-serif;
+    background: #939393;
+    color:white;
+    border: 0px;
+    border-radius: 0%;
+    pointer-events: none;
+  }
+
+  .button {
+    background-color: white;
+    border: 1px solid #2A618D;
+    color: #2A618D;
+    padding: 10px 30px;
+    margin:10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.button:hover{
+  background-color: #2A618D;
+  color: white;
+}
+
   .bar {
 	fill: steelblue;
   }
@@ -49,6 +98,23 @@
 <body>
   <h1>Armed Stats</h1>
   <svg id=armed_svg width="960" height="500"></svg>
+
+  <h2>Civilian Deaths</h2>
+
+  <div class="mid">
+    <p class="block" id="civilian2015"></p>
+    <p class="block" id="civilian2016"></p>
+  </div>
+  <br><br><br>
+  
+  <h2>Police Officer Deaths</h2>
+  <input id="scaleCiv" class="button" type="button" value="Scale Police Officer"   />
+  <div class="mid">
+    <p class="block" id="policeOfficer2015"></p>
+    <p class="block" id="policeOfficer2016"></p>
+  </div>
+
+
   <script>
     var svg = d3.select("#armed_svg"),
       margin = {top: 20, right: 20, bottom: 30, left: 150},
@@ -288,6 +354,325 @@
        .attr("transform", "translate(0," + height + ")")
      	 .call(d3.axisBottom(x_scale_cause).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
     })
+
+
+
+var stateData; 
+  var stateCountData = []; // state to count of police deaths and civ deaths
+
+  var scaleCiv2015; //scale for civilian deaths
+  var scalePolice2015; //scale for police deaths
+
+  var policeCount2015; 
+  var civCount2015;
+  var policeCount2016;
+  var policeCount2016;
+
+  //color range
+  var range1 = ['#E0ECF6','#D0E2F1', '#C0D8EC','#B0CFE8','#A1C5E3', '#89B6DC', '#81B2D9', '#72A8D5', 
+  '#629FD0', '#5295CB', '#438BC7', '#3881BC', '#3476AD', '#2F6C9D', '#2A618D', '#26567E', '#214B6E', 
+  '#1C415E', '#17364F', '#132B3F', '#0E202F','#09161F', '#050B10'];
+
+  var range = ['#E0ECF6','#B0CFE8','#A1C5E3', '#72A8D5', '#629FD0', '#5295CB', '#3476AD', '#2F6C9D', 
+  '#214B6E', '#1C415E', '#17364F', '#132B3F','#050B10'];
+
+  d3.queue()
+  .defer(d3.json, "us.json")
+  .defer(d3.json, "stateNames.json")
+  .defer(d3.json, "civilians_death.json")
+  .defer(d3.json, "police_death.json")
+  .await(function (error, rawMap, rawStates, civilian, police) {
+    states = topojson.feature(rawMap, rawMap.objects.states);
+
+    //fill stateCountData
+    stateData = d3.entries(rawStates);
+    stateData.forEach(function(d){
+      stateCountData.push({
+        key: d.key,
+        abbrev: d.value.abbreviation,
+        po: 0, //store police officer death
+        civ: 0 //store civilian death
+      });
+    });
+    //get police and civ data for 2015
+    policeCount2015 = getPolice(2015, police, stateCountData);
+    civCount2015 = getCiv(15, civilian, stateCountData);
+
+    var maxPolice2015 = getMaxPolice(policeCount2015);
+    var maxCiv2015 = getMaxCiv(civCount2015);
+
+    scalePolice2015 = d3.scaleQuantize().domain([0,maxPolice2015]).range(range);
+    scaleCiv2015 = d3.scaleQuantize().domain([0,maxCiv2015]).range(range1);
+
+    showMap("#policeOfficer2015", scaleCiv2015, "PoliceOfficer", policeCount2015, 2015);
+    showMap("#civilian2015", scaleCiv2015, "Civilian", civCount2015, 2015);
+
+    //get police and civ data for 2016
+    policeCount2016 = getPolice(2016, police, stateCountData);
+    civCount2016 = getCiv(16, civilian, stateCountData);
+
+    showMap("#policeOfficer2016", scaleCiv2015, "PoliceOfficer", policeCount2016, 2016);
+    showMap("#civilian2016", scaleCiv2015, "Civilian", civCount2016, 2016);
+  });
+
+
+//get all police officer death counts by year
+function getPolice(year,police, stateCount){
+  var policeCount = JSON.parse(JSON.stringify(stateCount));
+
+  police.forEach(function(d){
+    if (d["year"] == year){
+      console.log(year);
+      var state = d["state"];
+      for (var i = 0; i < policeCount.length; i++){
+        var currState = policeCount[i].abbrev;
+        if (state === currState){
+          policeCount[i].po = policeCount[i].po + 1;
+        }
+      }
+    }
+  });
+  return policeCount;
+}
+
+//get all civilian death counts by year 
+function getCiv(year, civilian, stateCount){
+  var civCount =  JSON.parse(JSON.stringify(stateCount));
+  
+  civilian.forEach(function(d){
+    var state = d["state"];
+    var date = d["date"]; 
+    //date format is MM/DD/YY 
+    date = date.substring(date.length-2);
+    if (date == year){
+      for (var i = 0; i < civCount.length; i++){
+        var currState = civCount[i].abbrev;
+        if (state === currState){
+          civCount[i].civ = civCount[i].civ + 1;
+        }
+      }
+    }
+  });
+  return civCount;
+}
+
+//get max of police death
+function getMaxPolice(policeCount){
+  return d3.max(policeCount, function(obj) {
+    return obj.po;
+  });
+}
+
+//get max value of civilian death 
+function getMaxCiv(civCount){
+  return d3.max(civCount, function(obj) {
+    return obj.civ;
+  });
+}
+
+
+var projection = d3.geoAlbersUsa().scale(75);
+var pathGenerator = d3.geoPath().projection(projection);
+var states;
+
+//displays the map, fills in according to scale, adds legend and labels
+function showMap(id, scale, variable, stateCount, year) {
+  var svg = d3.select(id)
+  .append("svg")
+  .attr("width", 500)
+  .attr("height", 400);
+
+  svg.append("text")
+  .attr("id", "name")
+  .attr("x", 300)
+  .attr("y", 50)
+  .style("font-size", "16px");
+
+  var div = d3.select("body").append("div")
+  .attr("class", "tooltip")
+  .style("opacity", 0);
+
+  projection.fitExtent([[0,0], [svg.attr("width") - 130, svg.attr("height")]], states);
+  pathGenerator = d3.geoPath().projection(projection);
+
+  var paths = svg.selectAll("path.state")
+  .data(states.features);
+
+  paths.enter()
+  //.append("path")
+  .insert("path", ".graticule")
+  .attr("class", "state")
+  .merge(paths)
+  .attr("stroke", "white")
+  .attr("stroke-width", 0.5)
+  .style("fill", function (state) {
+    var id = state.id;
+    for (var i = 0; i < stateCount.length; i++){
+      var stateID = stateCount[i].key;
+      if (id == stateID){
+        if (variable == "PoliceOfficer")
+          return scale(stateCount[i].po);
+        else
+          return scale(stateCount[i].civ);
+      }
+    } 
+  })
+  .attr("d", function (state) {
+    return pathGenerator(state);
+  })
+  .on("mouseover", function (state) {
+    d3.select(this)
+    .attr("stroke","black")
+    //.style("fill-opacity", 0.7);
+
+    var state;
+    var count; 
+
+    //get state name and info
+    var id = state.id;
+    for (var i = 0; i < stateCount.length; i++){
+      var stateID = stateCount[i].key;
+      if (id == stateID){
+        state = stateCount[i].abbrev;
+        if (variable == "PoliceOfficer"){
+          count = stateCount[i].po;
+        }
+        else {
+          count = stateCount[i].civ;
+        }
+      }
+    } 
+    var wholeID = variable+id+year;
+
+    // svg.append("text")
+    // .attr("id", wholeID)
+    // .attr("x", 250)
+    // .attr("y", 10)
+    // .attr("text-anchor", "middle")  
+    // .style("font-size", "10px") 
+    // .text(state + " : " + count);
+
+    div.transition()
+    .duration(200)
+    .style("opacity", .9);
+
+    var plural = count == 1 ? " person" : " people";
+
+    div.html(state + " : " + count + plural)
+    .style("left", (d3.event.pageX) + "px")
+    .style("top", (d3.event.pageY - 28) + "px");
+  })
+  .on("mouseout",function(state){
+    div.transition()
+    .duration(200)
+    .style("opacity", 0);
+
+    // var wholeID = variable+state.id+year;
+    // svg.select("#"+wholeID).remove();
+
+    d3.selectAll("path")
+    .attr("stroke", "white")
+    //.style("fill-opacity",1);
+
+  });
+
+  //display legend if 2015
+  if (year=="2015"){
+    var legend = svg.selectAll('g.legendEntry')
+    .data(scale.range().reverse())
+    .enter()
+    .append('g').attr('class', 'legendEntry');
+
+    legend
+    .append('rect')
+    .attr("x", 420)
+    .attr("y", function(d, i) {
+      return i*15+30;
+    })
+    .attr("width", 10)
+    .attr("height", 15)
+    .style("fill", function(d){return d;}); 
+
+    legend.append('text')
+    .attr("x", 440) 
+    .attr("y", function(d, i) {
+      return i * 15+30;
+    })
+    .attr("dy", "0.8em")
+    .text(function(d,i) {
+      var extent = scale.invertExtent(d);
+      var format = d3.format("d");
+      return format(+extent[0]) + " - " + format(+extent[1]);
+    });
+
+    svg.append("text")
+    .attr("x", 445)
+    .attr("y", 18)
+    .attr("text-anchor", "middle")  
+    .style("font-size", "10px") 
+    .text("Legend (Deaths)");
+  }
+
+  //titles
+  svg.append("text")
+  .attr("x", 120)
+  .attr("y", 30)
+  .attr("text-anchor", "middle")  
+  .style("font-size", "20px") 
+  .text(function(){
+    if (variable == "PoliceOfficer")
+      return "Police Officer Deaths " + year;
+    else 
+      return "Civilian Deaths " + year;
+  });
+}
+
+//scales the police officer graph to @param scale in @param year
+function scaleTo(scale, year){
+  var id = "#policeOfficer"+year;
+  var svg = d3.select(id).transition();
+
+  var count = getCount(year);
+
+  svg.selectAll("path")
+  .style("fill", function (state) {
+    var id = state.id;
+    for (var i = 0; i < count.length; i++){
+      var stateID = count[i].key;
+      if (id == stateID){
+        return scale(count[i].po);
+      }
+    } 
+  });
+}
+
+//return states + death counts for @param year 
+function getCount(year){
+  if (year == 2015)
+    return policeCount2015;
+  else 
+    return policeCount2016;
+}
+
+var police = true;
+$('#scaleCiv').click(function(){
+  if(police){
+    $(this).val("Scale Civilian");
+
+    police = false;
+    scaleTo(scalePolice2015, 2015)
+    scaleTo(scalePolice2015, 2016);
+
+  } else {
+    console.log($(this));
+    $(this).val("Scale Police Officer");  
+
+    police = true;
+    scaleTo(scaleCiv2015, 2015)
+    scaleTo(scaleCiv2015, 2016);
+
+  }
+});
 
   </script>
 
