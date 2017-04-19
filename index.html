@@ -42,8 +42,10 @@
     background-color: white;
     border: 1px solid #2A618D;
     color: #2A618D;
+    width:170px;
     padding: 10px 30px;
-    margin:10px;
+    position:relative;
+    margin: 10px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
@@ -55,6 +57,15 @@
   color: white;
 }
 
+.selected{
+  background-color: #2A618D;
+  color: white;
+}
+
+#menu{
+  text-align: center;
+  padding-top:20px;
+}
   .bar {
 	fill: steelblue;
   }
@@ -94,11 +105,11 @@
   text-align: center;
   }
 
-  #civ{
+/*  #civ{
     background-color: #f44336;
     float:left;
     font-size: 20px;
-  }
+  }*/
   #pol{
     background-color: #008CBA;
     margin-left: 600px;
@@ -126,6 +137,37 @@
 </style>
 </head>
 <body>
+<div id="menu">
+<input id="b2015" class="button selected" type="button" value="2015" />
+<input id="b2016" class="button" type="button" value="2016" /><br>
+<input id="po" class="button selected" type="button" value="Police Officer" />
+<input id="civ" class="button" type="button" value="Civilian" />
+</div>
+
+<script>
+// $("#b2015").click(function(){
+//   if ($(this).hasClass("selected")){
+//       $("#b2016").removeClass("selected");
+
+//   }
+//   else{
+//     $(this).removeClass("selected");
+//     $("#b2016").addClass("selected");
+//   }
+// });
+
+// $("#b2016").click(function(){
+//   if ($(this).hasClass("selected")){
+//     $("#b2015").removeClass("selected");
+//   }
+//   else{
+//     $(this).removeClass("selected");
+//     $("#b2016").addClass("selected");
+//   }
+// });
+
+</script>
+
   <h2 id="title">Police Officer Deaths vs. Civilian Deaths</h2>
 <div id="lotsOfLittleMen">
 
@@ -139,9 +181,9 @@
 }
 </style> -->
 
-<button id="civ" onclick="datafinder15()" type="button">2015</button>
+<!-- <button id="civ" onclick="datafinder15()" type="button">2015</button>
 
-<button id="pol" onclick="datafinder16()" type="button">2016</button></br>
+<button id="pol" onclick="datafinder16()" type="button">2016</button></br> -->
 
 
 <!-- <p id="demop"></p>
@@ -166,7 +208,7 @@
 <br><br><br>
 
 <h2>Police Officer Deaths</h2>
-<input id="scaleCiv" class="button" type="button" value="Scale Police Officer"   />
+
 <div class="mid">
   <p class="block" id="policeOfficer2015"></p>
   <p class="block" id="policeOfficer2016"></p>
@@ -541,7 +583,7 @@ document.getElementById('demo2').innerHTML = manString2;
 
 
 
-var stateData;
+  var stateData;
   var stateCountData = []; // state to count of police deaths and civ deaths
 
   var scaleCiv2015; //scale for civilian deaths
@@ -583,15 +625,15 @@ var stateData;
     scalePolice2015 = d3.scaleQuantize().domain([0,maxPolice2015]).range(range);
     scaleCiv2015 = d3.scaleQuantize().domain([0,maxCiv2015]).range(range1);
 
-    showMap("#policeOfficer2015", scaleCiv2015, "PoliceOfficer", policeCount2015, 2015);
-    showMap("#civilian2015", scaleCiv2015, "Civilian", civCount2015, 2015);
+    showMap("#policeOfficer2015", scaleCiv2015, "PoliceOfficer", policeCount2015, 2015, stateData);
+    showMap("#civilian2015", scaleCiv2015, "Civilian", civCount2015, 2015, stateData);
 
     //get police and civ data for 2016
     policeCount2016 = getPolice(2016, police, stateCountData);
     civCount2016 = getCiv(16, civilian, stateCountData);
 
-    showMap("#policeOfficer2016", scaleCiv2015, "PoliceOfficer", policeCount2016, 2016);
-    showMap("#civilian2016", scaleCiv2015, "Civilian", civCount2016, 2016);
+    showMap("#policeOfficer2016", scaleCiv2015, "PoliceOfficer", policeCount2016, 2016,stateData);
+    showMap("#civilian2016", scaleCiv2015, "Civilian", civCount2016, 2016,stateData);
   });
 
 
@@ -655,7 +697,7 @@ var pathGenerator = d3.geoPath().projection(projection);
 var states;
 
 //displays the map, fills in according to scale, adds legend and labels
-function showMap(id, scale, variable, stateCount, year) {
+function showMap(id, scale, variable, stateCount, year, stateData) {
   var svg = d3.select(id)
   .append("svg")
   .attr("width", 500)
@@ -698,6 +740,15 @@ function showMap(id, scale, variable, stateCount, year) {
   })
   .attr("d", function (state) {
     return pathGenerator(state);
+  })
+  .on("click", function (state){
+    var currID = state.id;
+
+    var abbrev; 
+    stateData.forEach(function(d){
+      if (currID == d.key)
+        abbrev = d.value.abbreviation;
+    });
   })
   .on("mouseover", function (state) {
     d3.select(this)
@@ -833,25 +884,7 @@ function getCount(year){
     return policeCount2016;
 }
 
-var police = true;
-$('#scaleCiv').click(function(){
-  if(police){
-    $(this).val("Scale Civilian");
 
-    police = false;
-    scaleTo(scalePolice2015, 2015)
-    scaleTo(scalePolice2015, 2016);
-
-  } else {
-    console.log($(this));
-    $(this).val("Scale Police Officer");
-
-    police = true;
-    scaleTo(scaleCiv2015, 2015)
-    scaleTo(scaleCiv2015, 2016);
-
-  }
-});
 
   </script>
 
