@@ -140,20 +140,10 @@
 
 <p class="block" id="map"></p>
 
-<h2>Civilian Deaths</h2>
+<script>
 
-<div class="mid">
-  <p class="block" id="civilian2015"></p>
-  <p class="block" id="civilian2016"></p>
-</div>
-<br><br><br>
 
-<h2>Police Officer Deaths</h2>
-<input id="scaleCiv" class="button" type="button" value="Scale Police Officer"   />
-<div class="mid">
-  <p class="block" id="policeOfficer2015"></p>
-  <p class="block" id="policeOfficer2016"></p>
-</div>
+</script>
 
 
   <h2 id="title">Police Officer Deaths vs. Civilian Deaths</h2>
@@ -187,7 +177,20 @@
 <h1>Armed Stats</h1>
 <svg id=armed_svg width="960" height="500"></svg>
 
+<h2>Civilian Deaths</h2>
 
+<div class="mid">
+  <p class="block" id="civilian2015"></p>
+  <p class="block" id="civilian2016"></p>
+</div>
+<br><br><br>
+
+<h2>Police Officer Deaths</h2>
+<input id="scaleCiv" class="button" type="button" value="Scale Police Officer"   />
+<div class="mid">
+  <p class="block" id="policeOfficer2015"></p>
+  <p class="block" id="policeOfficer2016"></p>
+</div>
 
 <h1>Gender Stats</h1>
 <svg id=gender_svg width="960" height="500"></svg>
@@ -199,8 +202,10 @@
 <svg id=police_svg width="960" height="500"></svg>
 
 <script id="notes">
+<<<<<<< Updated upstream
 var selectByStates;
 var abbrev;
+=======
 var stateData;
   var stateCountData = []; // state to count of police deaths and civ deaths
 
@@ -219,8 +224,7 @@ var stateData;
 
   var range = ['#E0ECF6','#B0CFE8','#A1C5E3', '#72A8D5', '#629FD0', '#5295CB', '#3476AD', '#2F6C9D',
   '#214B6E', '#1C415E', '#17364F', '#132B3F','#050B10'];
-
-  var range2 = ['#C4E8CD','#A7DDB4','#89D19B', '#7BCC8F', '#6CC683','#5DC076','#3FA258', '#338448', '#286738', '#1D4928','#112C18','#0B1D10'];
+>>>>>>> Stashed changes
 
 d3.queue()
 .defer(d3.json, "us.json")
@@ -605,12 +609,12 @@ document.getElementById('demo2').innerHTML = manString2;
     var maxPolice2015 = getMaxPolice(policeCount2015);
     var maxCiv2015 = getMaxCiv(civCount2015);
 
-    scalePolice2015 = d3.scaleQuantize().domain([0,maxPolice2015]).range(range2);
+    scalePolice2015 = d3.scaleQuantize().domain([0,maxPolice2015]).range(range);
     scaleCiv2015 = d3.scaleQuantize().domain([0,maxCiv2015]).range(range1);
 
     showMap("#map", scalePolice2015, "PoliceOfficer", policeCount2015, 2015,stateData);
 
-    showMap("#policeOfficer2015", scalePolice2015, "PoliceOfficer", policeCount2015, 2015,stateData);
+    showMap("#policeOfficer2015", scaleCiv2015, "PoliceOfficer", policeCount2015, 2015,stateData);
 
     showMap("#civilian2015", scaleCiv2015, "Civilian", civCount2015, 2015,stateData);
 
@@ -618,7 +622,7 @@ document.getElementById('demo2').innerHTML = manString2;
     policeCount2016 = getPolice(2016, police, stateCountData);
     civCount2016 = getCiv(16, civilian, stateCountData);
 
-    showMap("#policeOfficer2016", scalePolice2015, "PoliceOfficer", policeCount2016, 2016, stateData);
+    showMap("#policeOfficer2016", scaleCiv2015, "PoliceOfficer", policeCount2016, 2016, stateData);
     showMap("#civilian2016", scaleCiv2015, "Civilian", civCount2016, 2016, stateData);
   });
 
@@ -690,8 +694,7 @@ function getCivInfoStates(){
   .entries(chosenState);
 }
 
-var clicked = false;
-var orgColor;
+
 //displays the map, fills in according to scale, adds legend and labels
 function showMap(id, scale, variable, stateCount, year, stateData) {
   var svg = d3.select(id)
@@ -737,51 +740,21 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
   .attr("d", function (state) {
     return pathGenerator(state);
   })
-  .on("click", function (state){
+   .on("click", function (state){
+    var currID = state.id;
 
-  var currentState = d3.select(this);
 
-  if (!clicked){
-      orgColor = currentState.style("fill");
-      console.log(orgColor);
-
-      currentState
-      .style("fill","rgb(169, 169, 169)");
-      var currID = state.id;
-
-       stateData.forEach(function(d){
-         if (currID == d.key)
-          abbrev = d.value.abbreviation;
-      });
-       console.log(abbrev);
-       clicked = true;
-
-       getCivInfoStates();
-
-  }
-  else {  
-
-    //select something that is not 
-    //the original state
-    console.log(orgColor);
-    console.log(currentState.style("fill"));
-    if  (currentState.style("fill") == 'rgb(169, 169, 169)'){
-      currentState.style("fill", orgColor);
-      clicked = false;
-    } 
-    else {
-        console.log("please diselect the curr state");
-    }
-
-  }
-  
-  })
-  .on("dblclick", function (state){
-    console.log("DOBULE CLIEKCED STATE");
+     stateData.forEach(function(d){
+       if (currID == d.key)
+        abbrev = d.value.abbreviation;
+    });
+     console.log(abbrev);
+     getCivInfoStates();
   })
   .on("mouseover", function (state) {
     d3.select(this)
     .attr("stroke","black")
+    //.style("fill-opacity", 0.7);
 
     var state;
     var count;
@@ -802,6 +775,14 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
     }
     var wholeID = variable+id+year;
 
+    // svg.append("text")
+    // .attr("id", wholeID)
+    // .attr("x", 250)
+    // .attr("y", 10)
+    // .attr("text-anchor", "middle")
+    // .style("font-size", "10px")
+    // .text(state + " : " + count);
+
     div.transition()
     .duration(200)
     .style("opacity", .9);
@@ -817,8 +798,13 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
     .duration(200)
     .style("opacity", 0);
 
+    // var wholeID = variable+state.id+year;
+    // svg.select("#"+wholeID).remove();
+
     d3.selectAll("path")
     .attr("stroke", "white")
+    //.style("fill-opacity",1);
+
   });
 
   //display legend if 2015
@@ -872,16 +858,14 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
   });
 }
 
-//scales the @param variable graph to @param scale in @param year with @param scale
-function scaleTo(map, variable, scale, year){
-  var svg = d3.select(map);
+//scales the police officer graph to @param scale in @param year
+function scaleTo(map, scale, year){
+  //var id = "#policeOfficer"+year;
+  var svg = d3.select(map).transition();
+  console.log(scale);
+  var vari = String(scale).substring(5,6) == "P" ? "police" : "civ";
 
-  var count = getCount(variable,year);
-  console.log(count);
-
-  var div = d3.select("body").append("div")
-  .attr("class", "tooltip")
-  .style("opacity", 0);
+  var count = getCount(vari,year);
 
   svg.selectAll("path")
   .style("fill", function (state) {
@@ -889,54 +873,9 @@ function scaleTo(map, variable, scale, year){
     for (var i = 0; i < count.length; i++){
       var stateID = count[i].key;
       if (id == stateID){
-        if (variable == "police")
-          return scale(count[i].po);
-        else 
-          return scale(count[i].civ);
+        return scale(count[i].po);
       }
     }
-  })
-.on("mouseover", function (state){
-d3.select(this)
-    .attr("stroke","black")
-
-    var state;
-    var countState;
-
-    //get state name and info
-    var id = state.id;
-    for (var i = 0; i < count.length; i++){
-      var stateID = count[i].key;
-      if (id == stateID){
-        state = count[i].abbrev;
-        if (variable == "police"){
-          countState = count[i].po;
-        }
-        else {
-          countState = count[i].civ;
-        }
-      }
-    }
-    var wholeID = variable+id+year;
-
-    div.transition()
-    .duration(200)
-    .style("opacity", .9);
-
-    var plural = count == 1 ? " person" : " people";
-
-    div.html(state + " : " + countState + plural)
-    .style("left", (d3.event.pageX) + "px")
-    .style("top", (d3.event.pageY - 28) + "px");
-  })
-  .on("mouseout",function(state){
-    div.transition()
-    .duration(200)
-    .style("opacity", 0);
-
-    d3.selectAll("path")
-    .attr("stroke", "white")
-
   });
 }
 
@@ -960,6 +899,14 @@ function getCount(vari, year){
 $("#b2015").click(function(){
   if ($(this).hasClass("selected")){
     $("#b2016").removeClass("selected");
+
+    //change display
+    if ($("#po").hasClass("selected")){
+        scaleTo("#map",scalePolice2015, 2015);
+    }
+    else if ($("#civi").hasClass("selected")){
+      scaleTo("#map",scaleCiv2015, 2015);
+    }
   }
   else{
     $(this).addClass("selected");
@@ -968,28 +915,28 @@ $("#b2015").click(function(){
 
   //populate the map
   if ($("#po").hasClass("selected")){
-      scaleTo("#map","police", scalePolice2015, 2015);
+      scaleTo("#map",scalePolice2015, 2015);
   }
   else if ($("#civi").hasClass("selected")){
-    scaleTo("#map","civilian", scaleCiv2015, 2015);
+    scaleTo("#map",scaleCiv2015, 2015);
   }
 });
-
 $("#b2016").click(function(){
 if ($(this).hasClass("selected")){
     $("#b2015").removeClass("selected");
   }
   else{
+    console.log(scalePolice2015);
     $(this).addClass("selected");
     $("#b2015").removeClass("selected");
   }
 
   //populate the map
   if ($("#po").hasClass("selected")){
-    scaleTo("#map","police", scalePolice2015, 2016);
+      scaleTo("#map",scalePolice2015, 2015);
   }
   else if ($("#civi").hasClass("selected")){
-    scaleTo("#map","civilian", scaleCiv2015, 2016);
+    scaleTo("#map",scaleCiv2015, 2015);
   }
 });
 $("#po").click(function(){
@@ -1002,11 +949,10 @@ $("#po").click(function(){
   }
   //populate the map
   if ($("#b2015").hasClass("selected")){
-    scaleTo("#map","police", scalePolice2015, 2015);
+    scaleTo("#map",scalePolice2015, 2015);
   }
-  else {
-    console.log("switching to 2015");
-    scaleTo("#map","police", scalePolice2015, 2016);
+  else if ($("#b2016").hasClass("selected")){
+    scaleTo("#map",scalePolice2015, 2016);
   }
 });
 $("#civi").click(function(){
@@ -1019,10 +965,10 @@ $("#civi").click(function(){
   }
   //populate the map
   if ($("#b2015").hasClass("selected")){
-    scaleTo("#map","civilian", scaleCiv2015, 2015);
+    scaleTo("#map",scaleCiv2015, 2015);
   }
   else if ($("#b2016").hasClass("selected")){
-    scaleTo("#map","civilian", scaleCiv2015, 2016);
+    scaleTo("#map",scaleCiv2015, 2016);
   }
 });
 
