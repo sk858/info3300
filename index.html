@@ -168,9 +168,9 @@
 }
 </style> -->
 
-<button id="civ" onclick="datafinder15()" type="button">2015</button>
+<button id="civ" onclick="button15()" type="button">2015</button>
 
-<button id="pol" onclick="datafinder16()" type="button">2016</button></br>
+<button id="pol" onclick="button16()" type="button">2016</button></br>
 
 
 <!-- <p id="demop"></p>
@@ -219,149 +219,211 @@ d3.queue()
 .defer(d3.json, "stateNames.json")
 .defer(d3.json, "civilians_death.json")
 .defer(d3.json, "police_death.json")
-.await(function (error, rawMap, rawStates, civilian, police) {
 
+.await(function (error, rawMap, rawStates, civilian, police) {
+  datafinder15(civilian,police);
+  datafinder16(civilian,police);
+  clear();
+});
+
+
+
+var finalarray15=[];
+var finalarray16=[];
+
+<<<<<<< Updated upstream
 
 
 function datafinder15(){
+=======
+function datafinder15(civilian,police){
+>>>>>>> Stashed changes
 var civdeaths=[];
 var cdeath2015=[];
 var cdeath2016=[];
 
+var policedeaths=[];
+var pdeath2015=[];
+var pdeath2016=[];
 
-d3.json("cod.json", function(data) {
-  data.forEach(function(d) {
-    if (d.date.includes("/15")){
+var manString = "";
+var manString2 = "";
+
+
+
+
+
+
+  civilian.forEach(function(d) {
+    civdeaths.push(d);
+
+    if (d.date.slice(-2).includes("15")){
       cdeath2015.push(d);
     }
-    else if (d.date.includes("/16")){
+    else if (d.date.slice(-2).includes("16")){
       cdeath2016.push(d);
     }
 
-    civdeaths.push(d)
 
   });
 
-  document.getElementById('demop').innerHTML = "Number of Civilians Dead: "+ cdeath2015.length.toString();
+
 
 
 var man = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="red"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
 
 
-var manString = "";
+
 for (var i=0;i<cdeath2015.length;i++){
     manString += '<svg id="man' +i + '"';
     if(i>cdeath2015.length){manString+="style='opacity:0;'";}
     manString += man;
     if(i%15 == 14){manString+="</br>";}
 }
-document.getElementById('demo').innerHTML = manString;
 
-});
-var policedeaths=[];
-var pdeath2015=[];
-var pdeath2016=[];
-d3.json("pod.json", function(data) {
-  data.forEach(function(d2) {
-    if (d2.date.includes("/15")){
+
+
+  police.forEach(function(d2) {
+
+    if (d2.date.slice(-2).includes("15")){
       pdeath2015.push(d2);
     }
-    else if (d2.date.includes("/16")){
+    else if (d2.date.slice(-2).includes("16")){
       pdeath2016.push(d2);
     }
     policedeaths.push(d2)
   });
-   document.getElementById('demo2p').innerHTML = "Number of Police Dead: "+ pdeath2015.length.toString();
+   
 
 var man2 = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="blue"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
 
 
-var manString2 = "";
+
 for (var i=0;i<pdeath2015.length;i++){
     manString2 += '<svg id="man' +i + '"';
     if(i>pdeath2015.length){manString2+="style='opacity:0;'";}
     manString2 += man2;
     if(i%15 == 14){manString2+="</br>";}
 }
+  document.getElementById('demop').innerHTML = "Number of Civilians Dead: "+ cdeath2015.length.toString();
+  document.getElementById('demo2p').innerHTML = "Number of Police Dead: "+ pdeath2015.length.toString();
+  document.getElementById('demo').innerHTML = manString;
+  document.getElementById('demo2').innerHTML = manString2;
+  finalarray15.push("Number of Civilians Dead: "+ cdeath2015.length.toString());
+  finalarray15.push("Number of Police Dead: "+ pdeath2015.length.toString());
+  finalarray15.push(manString);
+  finalarray15.push(manString2);
+  return finalarray15;
+}
 
-document.getElementById('demo2').innerHTML = manString2;
+function button15(){
+  document.getElementById('demop').innerHTML = finalarray15[0];
+  document.getElementById('demo2p').innerHTML = finalarray15[1];
+  document.getElementById('demo').innerHTML = finalarray15[2];
+  document.getElementById('demo2').innerHTML = finalarray15[3];
+}
 
-
-
-});
+function button16(){
+  document.getElementById('demop').innerHTML = finalarray16[0];
+  document.getElementById('demo2p').innerHTML = finalarray16[1];
+  document.getElementById('demo').innerHTML = finalarray16[2];
+  document.getElementById('demo2').innerHTML = finalarray16[3];
 }
 
 
+function clear(){
+  document.getElementById('demop').innerHTML = "";
+  document.getElementById('demo2p').innerHTML = "";
+  document.getElementById('demo').innerHTML = "";
+  document.getElementById('demo2').innerHTML = "";
+}
 
-function datafinder16(){
+
+function datafinder16(civilian,police){
+
 var civdeaths=[];
 var cdeath2015=[];
 var cdeath2016=[];
 
+var policedeaths=[];
+var pdeath2015=[];
+var pdeath2016=[];
 
-d3.json("cod.json", function(data) {
-  data.forEach(function(d) {
-    if (d.date.includes("/15")){
+var manString = "";
+var manString2 = "";
+
+var finalarray=[];
+
+
+
+
+  civilian.forEach(function(d) {
+    civdeaths.push(d);
+
+    if (d.date.slice(-2).includes("15")){
       cdeath2015.push(d);
     }
-    else if (d.date.includes("/16")){
+    else if (d.date.slice(-2).includes("16")){
       cdeath2016.push(d);
     }
 
-    civdeaths.push(d)
 
   });
 
-  document.getElementById('demop').innerHTML = "Number of Civilians Dead: "+ cdeath2016.length.toString();
+
 
 
 var man = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="red"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
 
 
-var manString = "";
+
 for (var i=0;i<cdeath2016.length;i++){
     manString += '<svg id="man' +i + '"';
     if(i>cdeath2016.length){manString+="style='opacity:0;'";}
     manString += man;
     if(i%15 == 14){manString+="</br>";}
 }
-document.getElementById('demo').innerHTML = manString;
 
-});
-var policedeaths=[];
-var pdeath2015=[];
-var pdeath2016=[];
-d3.json("pod.json", function(data) {
-  data.forEach(function(d2) {
-    if (d2.date.includes("/15")){
+
+
+  police.forEach(function(d2) {
+
+    if (d2.date.slice(-2).includes("15")){
       pdeath2015.push(d2);
     }
-    else if (d2.date.includes("/16")){
+    else if (d2.date.slice(-2).includes("16")){
       pdeath2016.push(d2);
     }
     policedeaths.push(d2)
   });
-
-   document.getElementById('demo2p').innerHTML = "Number of Police Dead: "+ pdeath2016.length.toString();
+   
 
 var man2 = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="blue"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
 
 
-var manString2 = "";
+
 for (var i=0;i<pdeath2016.length;i++){
     manString2 += '<svg id="man' +i + '"';
     if(i>pdeath2016.length){manString2+="style='opacity:0;'";}
     manString2 += man2;
     if(i%15 == 14){manString2+="</br>";}
 }
-
-document.getElementById('demo2').innerHTML = manString2;
-
-
-
-});
-
+  document.getElementById('demop').innerHTML = "Number of Civilians Dead: "+ cdeath2016.length.toString();
+  document.getElementById('demo2p').innerHTML = "Number of Police Dead: "+ pdeath2016.length.toString();
+  document.getElementById('demo').innerHTML = manString;
+  document.getElementById('demo2').innerHTML = manString2;
+  finalarray16.push("Number of Civilians Dead: "+ cdeath2016.length.toString());
+  finalarray16.push("Number of Police Dead: "+ pdeath2016.length.toString());
+  finalarray16.push(manString);
+  finalarray16.push(manString2);
+  return finalarray16;
 }
+
+
+
+
+
+
 
     var svg = d3.select("#armed_svg"),
       margin = {top: 20, right: 20, bottom: 30, left: 150},
@@ -624,9 +686,15 @@ var stateData;
     policeCount2016 = getPolice(2016, police, stateCountData);
     civCount2016 = getCiv(16, civilian, stateCountData);
 
+<<<<<<< Updated upstream
     showMap("#policeOfficer2016", scaleCiv2015, "PoliceOfficer", policeCount2016, 2016, stateData);
     showMap("#civilian2016", scaleCiv2015, "Civilian", civCount2016, 2016, stateData);
   });
+=======
+    showMap("#policeOfficer2016", scaleCiv2015, "PoliceOfficer", policeCount2016, 2016);
+    showMap("#civilian2016", scaleCiv2015, "Civilian", civCount2016, 2016);
+  
+>>>>>>> Stashed changes
 
 
 //get all police officer death counts by year
