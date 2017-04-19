@@ -224,20 +224,51 @@ d3.queue()
   datafinder15(civilian,police);
   datafinder16(civilian,police);
   clear();
-});
+states = topojson.feature(rawMap, rawMap.objects.states);
+
+    //fill stateCountData
+    stateData = d3.entries(rawStates);
+    stateData.forEach(function(d){
+      stateCountData.push({
+        key: d.key,
+        abbrev: d.value.abbreviation,
+        po: 0, //store police officer death
+        civ: 0 //store civilian death
+      });
+    });
+    //get police and civ data for 2015
+    policeCount2015 = getPolice(2015, police, stateCountData);
+    civCount2015 = getCiv(15, civilian, stateCountData);
+
+    var maxPolice2015 = getMaxPolice(policeCount2015);
+    var maxCiv2015 = getMaxCiv(civCount2015);
+
+    scalePolice2015 = d3.scaleQuantize().domain([0,maxPolice2015]).range(range);
+    scaleCiv2015 = d3.scaleQuantize().domain([0,maxCiv2015]).range(range1);
+
+    showMap("#policeOfficer2015", scaleCiv2015, "PoliceOfficer", policeCount2015, 2015,stateData);
+    showMap("#civilian2015", scaleCiv2015, "Civilian", civCount2015, 2015,stateData);
+
+    //get police and civ data for 2016
+    policeCount2016 = getPolice(2016, police, stateCountData);
+    civCount2016 = getCiv(16, civilian, stateCountData);
+
+
+    showMap("#policeOfficer2016", scaleCiv2015, "PoliceOfficer", policeCount2016, 2016, stateData);
+    showMap("#civilian2016", scaleCiv2015, "Civilian", civCount2016, 2016, stateData);
+  });
 
 
 
 var finalarray15=[];
 var finalarray16=[];
 
-<<<<<<< Updated upstream
 
 
-function datafinder15(){
-=======
+
+
 function datafinder15(civilian,police){
->>>>>>> Stashed changes
+
 var civdeaths=[];
 var cdeath2015=[];
 var cdeath2016=[];
@@ -657,44 +688,11 @@ var stateData;
   '#214B6E', '#1C415E', '#17364F', '#132B3F','#050B10'];
 
 
-    states = topojson.feature(rawMap, rawMap.objects.states);
+    
 
-    //fill stateCountData
-    stateData = d3.entries(rawStates);
-    stateData.forEach(function(d){
-      stateCountData.push({
-        key: d.key,
-        abbrev: d.value.abbreviation,
-        po: 0, //store police officer death
-        civ: 0 //store civilian death
-      });
-    });
-    //get police and civ data for 2015
-    policeCount2015 = getPolice(2015, police, stateCountData);
-    civCount2015 = getCiv(15, civilian, stateCountData);
 
-    var maxPolice2015 = getMaxPolice(policeCount2015);
-    var maxCiv2015 = getMaxCiv(civCount2015);
-
-    scalePolice2015 = d3.scaleQuantize().domain([0,maxPolice2015]).range(range);
-    scaleCiv2015 = d3.scaleQuantize().domain([0,maxCiv2015]).range(range1);
-
-    showMap("#policeOfficer2015", scaleCiv2015, "PoliceOfficer", policeCount2015, 2015,stateData);
-    showMap("#civilian2015", scaleCiv2015, "Civilian", civCount2015, 2015,stateData);
-
-    //get police and civ data for 2016
-    policeCount2016 = getPolice(2016, police, stateCountData);
-    civCount2016 = getCiv(16, civilian, stateCountData);
-
-<<<<<<< Updated upstream
-    showMap("#policeOfficer2016", scaleCiv2015, "PoliceOfficer", policeCount2016, 2016, stateData);
-    showMap("#civilian2016", scaleCiv2015, "Civilian", civCount2016, 2016, stateData);
-  });
-=======
-    showMap("#policeOfficer2016", scaleCiv2015, "PoliceOfficer", policeCount2016, 2016);
-    showMap("#civilian2016", scaleCiv2015, "Civilian", civCount2016, 2016);
   
->>>>>>> Stashed changes
+
 
 
 //get all police officer death counts by year
