@@ -339,19 +339,19 @@ document.getElementById('demo2').innerHTML = manString2;
 
     var tooltip = d3.select("body").append("div").attr("class", "toolTip");
 
-    d3.json("civilians_death.json", function(data){
+
       var selectByStates = d3.nest()
         .key(function(d) { return d.state; })
-        .entries(data);
+        .entries(civilian);
       console.log(selectByStates);
 
-      var count_gun = data.filter(function(value){return value.armed==="gun"&&  1/01/15<value.date<12/30/15}).length;
-      var count_unarmed = data.filter(function(value){return value.armed==="unarmed"}).length;
-      var count_vehicle = data.filter(function(value){return value.armed==="vehicle"}).length;
-      var count_knife = data.filter(function(value){return value.armed==="knife"}).length;
-      var count_toy_weapon = data.filter(function(value){return value.armed==="toy weapon" }).length;
-      var count_undetermined = data.filter(function(value){return value.armed==="undetermined" &&  1/01/15<value.date<12/30/15 }).length;
-      var count_other = data.filter(function(value){
+      var count_gun = civilian.filter(function(value){return value.armed==="gun"&&  1/01/15<value.date<12/30/15}).length;
+      var count_unarmed = civilian.filter(function(value){return value.armed==="unarmed"}).length;
+      var count_vehicle = civilian.filter(function(value){return value.armed==="vehicle"}).length;
+      var count_knife = civilian.filter(function(value){return value.armed==="knife"}).length;
+      var count_toy_weapon = civilian.filter(function(value){return value.armed==="toy weapon" }).length;
+      var count_undetermined = civilian.filter(function(value){return value.armed==="undetermined" &&  1/01/15<value.date<12/30/15 }).length;
+      var count_other = civilian.filter(function(value){
         if(value.armed==="gun" || value.armed==="unarmed" || value.armed==="vehicle" || value.armed ==="knife" || value.armed ==="toy weapon" || value.armed ==="undetermined"){
           return false;
         }
@@ -393,7 +393,7 @@ document.getElementById('demo2').innerHTML = manString2;
         .attr("class", "x_axis")
        	.attr("transform", "translate(0," + height + ")")
       	.call(d3.axisBottom(x_scale).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
-    })
+
 
     var svg1 = d3.select("#gender_svg"),
       margin = {top: 20, right: 20, bottom: 30, left: 150},
@@ -402,10 +402,9 @@ document.getElementById('demo2').innerHTML = manString2;
     var g_gender = svg1.append("g")
        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    d3.json("civilians_death.json", function(data){
 
-      var count_male = data.filter(function(value){return value.gender==="M"}).length;
-      var count_female = data.filter(function(value){return value.gender==="F"}).length;
+      var count_male = civilian.filter(function(value){return value.gender==="M"}).length;
+      var count_female = civilian.filter(function(value){return value.gender==="F"}).length;
 
       var counts_gender = [{"gender":"Male","value":count_male},{"gender":"Female","value":count_female}];
       var x_scale_gender = d3.scaleLinear().domain([0, d3.max(counts_gender, function(d) { return d.value; })]).range([0, width]);
@@ -439,7 +438,7 @@ document.getElementById('demo2').innerHTML = manString2;
         .attr("class", "x_axis")
         .attr("transform", "translate(0," + height + ")")
         .call(d3.axisBottom(x_scale_gender).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
-    })
+
 
     var svg2 = d3.select("#race_svg"),
       margin = {top: 20, right: 20, bottom: 30, left: 150},
@@ -449,14 +448,14 @@ document.getElementById('demo2').innerHTML = manString2;
     var g_race = svg2.append("g")
        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    d3.json("civilians_death.json", function(data){
 
-     var count_asian = data.filter(function(value){return value.race==="A"}).length;
-     var count_black = data.filter(function(value){return value.race==="B"}).length;
-     var count_hispanic = data.filter(function(value){return value.race==="H"}).length;
-     var count_native = data.filter(function(value){return value.race==="N"}).length;
-     var count_white = data.filter(function(value){return value.race==="W" }).length;
-     var count_other_race = data.filter(function(value){return value.race==="O"}).length;
+
+     var count_asian = civilian.filter(function(value){return value.race==="A"}).length;
+     var count_black = civilian.filter(function(value){return value.race==="B"}).length;
+     var count_hispanic = civilian.filter(function(value){return value.race==="H"}).length;
+     var count_native = civilian.filter(function(value){return value.race==="N"}).length;
+     var count_white = civilian.filter(function(value){return value.race==="W" }).length;
+     var count_other_race = civilian.filter(function(value){return value.race==="O"}).length;
 
      var counts_race = [{"race":"Asian","value":count_asian},{"race":"Black","value":count_black}, {"race":"Hispanic","value":count_hispanic},
      {"race":"Native American","value":count_native}, {"race":"White","value":count_white}, {"race":"Other","value":count_other_race}];
@@ -492,7 +491,6 @@ document.getElementById('demo2').innerHTML = manString2;
        .attr("class", "x_axis")
       	.attr("transform", "translate(0," + height + ")")
      	.call(d3.axisBottom(x_scale_race).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
-    })
 
 
     var svg3 = d3.select("#police_svg"),
@@ -503,30 +501,11 @@ document.getElementById('demo2').innerHTML = manString2;
     var g_cause = svg3.append("g")
        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    d3.json("police_death.json", function(data){
 
      var counts_cause = d3.nest()
       .key(function(d) { return d.cause_short; })
       .rollup(function(v) { return v.length; })
-      .entries(data);
-
-     var cause_list =[]
-     var count_1 = data.filter(function(value){return value.cause_short==="9/11 related illness"}).length;
-     var count_2 = data.filter(function(value){return value.cause_short==="Accidental"}).length;
-     var count_3 = data.filter(function(value){return value.cause_short==="Aircraft accident"}).length;
-     var count_4 = data.filter(function(value){return value.cause_short==="Animal related"}).length;
-     var count_5 = data.filter(function(value){return value.cause_short==="Asphyxiation"}).length;
-     var count_6 = data.filter(function(value){return value.cause_short==="Assault"}).length;
-     var count_7 = data.filter(function(value){return value.cause_short==="Automobile accident"}).length;
-     var count_8 = data.filter(function(value){return value.cause_short==="Bomb"}).length;
-     var count_9 = data.filter(function(value){return value.cause_short==="Drowned"}).length;
-     var count_10 = data.filter(function(value){return value.cause_short==="Duty related illness"}).length;
-     var count_11 = data.filter(function(value){return value.cause_short==="Fall"}).length;
-     var count_12 = data.filter(function(value){return value.cause_short==="Fire"}).length;
-     var count_13 = data.filter(function(value){return value.cause_short==="Gunfire"}).length;
-     var count_14 = data.filter(function(value){return value.cause_short==="Gunfire (Accidental)"}).length;
-     var count_15 = data.filter(function(value){return value.cause_short==="Heart attack"}).length;
-
+      .entries(police);
 
      var x_scale_cause = d3.scaleLinear().domain([0, d3.max(counts_cause, function(d) { return d.value; })]).range([0, width]);
      var y_scale_cause = d3.scaleBand().domain(counts_cause.map(function(d) { return d.key; })).range([height, 0]).padding(0.1);
@@ -559,7 +538,6 @@ document.getElementById('demo2').innerHTML = manString2;
        .attr("class", "x_axis")
        .attr("transform", "translate(0," + height + ")")
      	 .call(d3.axisBottom(x_scale_cause).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
-    })
 
 
 
