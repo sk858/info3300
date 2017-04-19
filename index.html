@@ -11,15 +11,15 @@
     .mid{
     padding-left:160px;
   }
-  .block { 
+  .block {
     /*border: solid white 1px; */
     display: inline-block;
     margin: auto;
   }
-  body { 
+  body {
     margin-left: auto;
     margin-right: auto;
-    font-size:10px; 
+    font-size:10px;
     font-family: 'Source Sans Pro',sans-serif;
     background-color: #ffffff;
   }
@@ -93,27 +93,7 @@
   padding: 14px;
   text-align: center;
   }
-  </style>
-</head>
-<body>
-  <h2 id="title">Police Officer Deaths vs. Civilian Deaths</h2>
-<div id="lotsOfLittleMen">
 
-<br/><br/>
-
-<!-- <svg id="dividingline" width="50" height="2000">  <line x1="5" y1="5" x2="5" y2="1950" stroke="gray" stroke-width="5"  /></svg>
-
-<style>
-#dividingline{
-  transform: translate(700px, 0px) 
-}
-</style> -->
-
-<button id="civ" onclick="datafinder15()" type="button">2015</button>
-
-<button id="pol" onclick="datafinder16()" type="button">2016</button></br>
-
-<style>
   #civ{
     background-color: #f44336;
     float:left;
@@ -127,22 +107,6 @@
   #title{
     text-align: center;
   }
-</style>
-
-
-
-
-<!-- <p id="demop"></p>
-<p id="demo2p"></p>
-<div id="demo"></div>
-<div id="demo2"></div> -->
-
-<h3 id="demop"></h3>
-<h3 id="demo2p"></h3>
-<div id="demo"></div>
-<div id="demo2"></div>
-
-<style>
   #demo2{
     /*ransform: translate(700px, -2720px) ;*/
     margin-left: 200px;
@@ -159,14 +123,71 @@
   #demo2p{
     margin-left: 600px;
   }
-
-
 </style>
+</head>
+<body>
+  <h2 id="title">Police Officer Deaths vs. Civilian Deaths</h2>
+<div id="lotsOfLittleMen">
+
+<br/><br/>
+
+<!-- <svg id="dividingline" width="50" height="2000">  <line x1="5" y1="5" x2="5" y2="1950" stroke="gray" stroke-width="5"  /></svg>
+
+<style>
+#dividingline{
+  transform: translate(700px, 0px)
+}
+</style> -->
+
+<button id="civ" onclick="datafinder15()" type="button">2015</button>
+
+<button id="pol" onclick="datafinder16()" type="button">2016</button></br>
+
+
+<!-- <p id="demop"></p>
+<p id="demo2p"></p>
+<div id="demo"></div>
+<div id="demo2"></div> -->
+
+<h3 id="demop"></h3>
+<h3 id="demo2p"></h3>
+<div id="demo"></div>
+<div id="demo2"></div>
+
+<h1>Armed Stats</h1>
+<svg id=armed_svg width="960" height="500"></svg>
+
+<h2>Civilian Deaths</h2>
+
+<div class="mid">
+  <p class="block" id="civilian2015"></p>
+  <p class="block" id="civilian2016"></p>
+</div>
+<br><br><br>
+
+<h2>Police Officer Deaths</h2>
+<input id="scaleCiv" class="button" type="button" value="Scale Police Officer"   />
+<div class="mid">
+  <p class="block" id="policeOfficer2015"></p>
+  <p class="block" id="policeOfficer2016"></p>
+</div>
+
+<h1>Gender Stats</h1>
+<svg id=gender_svg width="960" height="500"></svg>
+
+<h1>Race stats</h1>
+<svg id=race_svg width="960" height="500"></svg>
+
+<h1>Police Officer Death</h1>
+<svg id=police_svg width="960" height="500"></svg>
 
 <script id="notes">
-
-
-
+d3.queue()
+.defer(d3.json, "us.json")
+.defer(d3.json, "stateNames.json")
+.defer(d3.json, "civilians_death.json")
+.defer(d3.json, "police_death.json")
+.await(function (error, rawMap, rawStates, civilian, police) {
 
 function datafinder15(){
 var civdeaths=[];
@@ -187,11 +208,6 @@ d3.json("cod.json", function(data) {
 
   });
 
-  console.log("civilian deaths:");
-  console.log(cdeath2015.length);
-  console.log(cdeath2016.length);
-  console.log(civdeaths.length);
-  console.log(cdeath2015.length);
   document.getElementById('demop').innerHTML = "Number of Civilians Dead: "+ cdeath2015.length.toString();
 
 
@@ -221,10 +237,6 @@ d3.json("pod.json", function(data) {
     }
     policedeaths.push(d2)
   });
-  console.log("police deaths");
-  console.log(pdeath2015.length);
-  console.log(pdeath2016.length);
-  console.log(policedeaths.length);
    document.getElementById('demo2p').innerHTML = "Number of Police Dead: "+ pdeath2015.length.toString();
 
 var man2 = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="blue"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
@@ -266,11 +278,6 @@ d3.json("cod.json", function(data) {
 
   });
 
-  console.log("civilian deaths:");
-  console.log(cdeath2015.length);
-  console.log(cdeath2016.length);
-  console.log(civdeaths.length);
-  console.log(cdeath2015.length);
   document.getElementById('demop').innerHTML = "Number of Civilians Dead: "+ cdeath2016.length.toString();
 
 
@@ -300,10 +307,7 @@ d3.json("pod.json", function(data) {
     }
     policedeaths.push(d2)
   });
-  console.log("police deaths");
-  console.log(pdeath2015.length);
-  console.log(pdeath2016.length);
-  console.log(policedeaths.length);
+
    document.getElementById('demo2p').innerHTML = "Number of Police Dead: "+ pdeath2016.length.toString();
 
 var man2 = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="blue"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
@@ -325,37 +329,6 @@ document.getElementById('demo2').innerHTML = manString2;
 
 }
 
-
-
-
-
-
-
-
-
-</script>
-
-
-  <h1>Armed Stats</h1>
-  <svg id=armed_svg width="960" height="500"></svg>
-
-  <h2>Civilian Deaths</h2>
-
-  <div class="mid">
-    <p class="block" id="civilian2015"></p>
-    <p class="block" id="civilian2016"></p>
-  </div>
-  <br><br><br>
-  
-  <h2>Police Officer Deaths</h2>
-  <input id="scaleCiv" class="button" type="button" value="Scale Police Officer"   />
-  <div class="mid">
-    <p class="block" id="policeOfficer2015"></p>
-    <p class="block" id="policeOfficer2016"></p>
-  </div>
-
-
-  <script>
     var svg = d3.select("#armed_svg"),
       margin = {top: 20, right: 20, bottom: 30, left: 150},
       width = +svg.attr("width") - margin.left - margin.right,
@@ -367,7 +340,11 @@ document.getElementById('demo2').innerHTML = manString2;
     var tooltip = d3.select("body").append("div").attr("class", "toolTip");
 
     d3.json("civilians_death.json", function(data){
-      console.log(data[0]);
+      var selectByStates = d3.nest()
+        .key(function(d) { return d.state; })
+        .entries(data);
+      console.log(selectByStates);
+
       var count_gun = data.filter(function(value){return value.armed==="gun"&&  1/01/15<value.date<12/30/15}).length;
       var count_unarmed = data.filter(function(value){return value.armed==="unarmed"}).length;
       var count_vehicle = data.filter(function(value){return value.armed==="vehicle"}).length;
@@ -380,11 +357,11 @@ document.getElementById('demo2').innerHTML = manString2;
         }
         return true;
       }).length;
-      console.log(count_other);
+
 
       var counts_armed = [{"armed":"Gun","value":count_gun},{"armed":"Knife","value":count_knife}, {"armed":"Unarmed","value":count_unarmed},
       {"armed":"Vehicle","value":count_vehicle}, {"armed":"Toy Weapon","value":count_toy_weapon}, {"armed":"Undetermined","value":count_undetermined}, {"armed":"Other", "value":count_other}];
-      console.log(counts_armed);
+
       var x_scale = d3.scaleLinear().domain([0, d3.max(counts_armed, function(d) { return d.value; })]).range([0, width]);
       var y_scale = d3.scaleBand().domain(counts_armed.map(function(d) { return d.armed; })).range([height, 0]).padding(0.1);
 
@@ -417,11 +394,7 @@ document.getElementById('demo2').innerHTML = manString2;
        	.attr("transform", "translate(0," + height + ")")
       	.call(d3.axisBottom(x_scale).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
     })
-  </script>
 
-  <h1>Gender Stats</h1>
-  <svg id=gender_svg width="960" height="500"></svg>
-  <script>
     var svg1 = d3.select("#gender_svg"),
       margin = {top: 20, right: 20, bottom: 30, left: 150},
       width = +svg.attr("width") - margin.left - margin.right,
@@ -430,7 +403,7 @@ document.getElementById('demo2').innerHTML = manString2;
        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     d3.json("civilians_death.json", function(data){
-      console.log(data[0]);
+
       var count_male = data.filter(function(value){return value.gender==="M"}).length;
       var count_female = data.filter(function(value){return value.gender==="F"}).length;
 
@@ -467,10 +440,7 @@ document.getElementById('demo2').innerHTML = manString2;
         .attr("transform", "translate(0," + height + ")")
         .call(d3.axisBottom(x_scale_gender).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
     })
-  </script>
-  <h1>Race stats</h1>
-  <svg id=race_svg width="960" height="500"></svg>
-  <script>
+
     var svg2 = d3.select("#race_svg"),
       margin = {top: 20, right: 20, bottom: 30, left: 150},
       width = +svg.attr("width") - margin.left - margin.right,
@@ -480,7 +450,7 @@ document.getElementById('demo2').innerHTML = manString2;
        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     d3.json("civilians_death.json", function(data){
-     console.log(data[0]);
+
      var count_asian = data.filter(function(value){return value.race==="A"}).length;
      var count_black = data.filter(function(value){return value.race==="B"}).length;
      var count_hispanic = data.filter(function(value){return value.race==="H"}).length;
@@ -524,11 +494,7 @@ document.getElementById('demo2').innerHTML = manString2;
      	.call(d3.axisBottom(x_scale_race).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
     })
 
-  </script>
 
-  <h1>Police Officer Death</h1>
-  <svg id=police_svg width="960" height="500"></svg>
-  <script>
     var svg3 = d3.select("#police_svg"),
       margin = {top: 20, right: 20, bottom: 30, left: 150},
       width = +svg.attr("width") - margin.left - margin.right,
@@ -538,12 +504,12 @@ document.getElementById('demo2').innerHTML = manString2;
        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     d3.json("police_death.json", function(data){
-     console.log(data[0]);
+
      var counts_cause = d3.nest()
       .key(function(d) { return d.cause_short; })
       .rollup(function(v) { return v.length; })
       .entries(data);
-    console.log(counts_cause);
+
      var cause_list =[]
      var count_1 = data.filter(function(value){return value.cause_short==="9/11 related illness"}).length;
      var count_2 = data.filter(function(value){return value.cause_short==="Accidental"}).length;
@@ -597,31 +563,26 @@ document.getElementById('demo2').innerHTML = manString2;
 
 
 
-var stateData; 
+var stateData;
   var stateCountData = []; // state to count of police deaths and civ deaths
 
   var scaleCiv2015; //scale for civilian deaths
   var scalePolice2015; //scale for police deaths
 
-  var policeCount2015; 
+  var policeCount2015;
   var civCount2015;
   var policeCount2016;
   var policeCount2016;
 
   //color range
-  var range1 = ['#E0ECF6','#D0E2F1', '#C0D8EC','#B0CFE8','#A1C5E3', '#89B6DC', '#81B2D9', '#72A8D5', 
-  '#629FD0', '#5295CB', '#438BC7', '#3881BC', '#3476AD', '#2F6C9D', '#2A618D', '#26567E', '#214B6E', 
+  var range1 = ['#E0ECF6','#D0E2F1', '#C0D8EC','#B0CFE8','#A1C5E3', '#89B6DC', '#81B2D9', '#72A8D5',
+  '#629FD0', '#5295CB', '#438BC7', '#3881BC', '#3476AD', '#2F6C9D', '#2A618D', '#26567E', '#214B6E',
   '#1C415E', '#17364F', '#132B3F', '#0E202F','#09161F', '#050B10'];
 
-  var range = ['#E0ECF6','#B0CFE8','#A1C5E3', '#72A8D5', '#629FD0', '#5295CB', '#3476AD', '#2F6C9D', 
+  var range = ['#E0ECF6','#B0CFE8','#A1C5E3', '#72A8D5', '#629FD0', '#5295CB', '#3476AD', '#2F6C9D',
   '#214B6E', '#1C415E', '#17364F', '#132B3F','#050B10'];
 
-  d3.queue()
-  .defer(d3.json, "us.json")
-  .defer(d3.json, "stateNames.json")
-  .defer(d3.json, "civilians_death.json")
-  .defer(d3.json, "police_death.json")
-  .await(function (error, rawMap, rawStates, civilian, police) {
+
     states = topojson.feature(rawMap, rawMap.objects.states);
 
     //fill stateCountData
@@ -662,7 +623,7 @@ function getPolice(year,police, stateCount){
 
   police.forEach(function(d){
     if (d["year"] == year){
-      console.log(year);
+
       var state = d["state"];
       for (var i = 0; i < policeCount.length; i++){
         var currState = policeCount[i].abbrev;
@@ -675,14 +636,14 @@ function getPolice(year,police, stateCount){
   return policeCount;
 }
 
-//get all civilian death counts by year 
+//get all civilian death counts by year
 function getCiv(year, civilian, stateCount){
   var civCount =  JSON.parse(JSON.stringify(stateCount));
-  
+
   civilian.forEach(function(d){
     var state = d["state"];
-    var date = d["date"]; 
-    //date format is MM/DD/YY 
+    var date = d["date"];
+    //date format is MM/DD/YY
     date = date.substring(date.length-2);
     if (date == year){
       for (var i = 0; i < civCount.length; i++){
@@ -703,7 +664,7 @@ function getMaxPolice(policeCount){
   });
 }
 
-//get max value of civilian death 
+//get max value of civilian death
 function getMaxCiv(civCount){
   return d3.max(civCount, function(obj) {
     return obj.civ;
@@ -755,7 +716,7 @@ function showMap(id, scale, variable, stateCount, year) {
         else
           return scale(stateCount[i].civ);
       }
-    } 
+    }
   })
   .attr("d", function (state) {
     return pathGenerator(state);
@@ -766,7 +727,7 @@ function showMap(id, scale, variable, stateCount, year) {
     //.style("fill-opacity", 0.7);
 
     var state;
-    var count; 
+    var count;
 
     //get state name and info
     var id = state.id;
@@ -781,15 +742,15 @@ function showMap(id, scale, variable, stateCount, year) {
           count = stateCount[i].civ;
         }
       }
-    } 
+    }
     var wholeID = variable+id+year;
 
     // svg.append("text")
     // .attr("id", wholeID)
     // .attr("x", 250)
     // .attr("y", 10)
-    // .attr("text-anchor", "middle")  
-    // .style("font-size", "10px") 
+    // .attr("text-anchor", "middle")
+    // .style("font-size", "10px")
     // .text(state + " : " + count);
 
     div.transition()
@@ -831,10 +792,10 @@ function showMap(id, scale, variable, stateCount, year) {
     })
     .attr("width", 10)
     .attr("height", 15)
-    .style("fill", function(d){return d;}); 
+    .style("fill", function(d){return d;});
 
     legend.append('text')
-    .attr("x", 440) 
+    .attr("x", 440)
     .attr("y", function(d, i) {
       return i * 15+30;
     })
@@ -848,8 +809,8 @@ function showMap(id, scale, variable, stateCount, year) {
     svg.append("text")
     .attr("x", 445)
     .attr("y", 18)
-    .attr("text-anchor", "middle")  
-    .style("font-size", "10px") 
+    .attr("text-anchor", "middle")
+    .style("font-size", "10px")
     .text("Legend (Deaths)");
   }
 
@@ -857,12 +818,12 @@ function showMap(id, scale, variable, stateCount, year) {
   svg.append("text")
   .attr("x", 120)
   .attr("y", 30)
-  .attr("text-anchor", "middle")  
-  .style("font-size", "20px") 
+  .attr("text-anchor", "middle")
+  .style("font-size", "20px")
   .text(function(){
     if (variable == "PoliceOfficer")
       return "Police Officer Deaths " + year;
-    else 
+    else
       return "Civilian Deaths " + year;
   });
 }
@@ -882,15 +843,15 @@ function scaleTo(scale, year){
       if (id == stateID){
         return scale(count[i].po);
       }
-    } 
+    }
   });
 }
 
-//return states + death counts for @param year 
+//return states + death counts for @param year
 function getCount(year){
   if (year == 2015)
     return policeCount2015;
-  else 
+  else
     return policeCount2016;
 }
 
@@ -905,7 +866,7 @@ $('#scaleCiv').click(function(){
 
   } else {
     console.log($(this));
-    $(this).val("Scale Police Officer");  
+    $(this).val("Scale Police Officer");
 
     police = true;
     scaleTo(scaleCiv2015, 2015)
