@@ -154,8 +154,7 @@
 
 </script>
 
-=======
->>>>>>> 1493b987fa32b4c9a672801d3be5b116f70ce099
+
   <h2 id="title">Police Officer Deaths vs. Civilian Deaths</h2>
 <div id="lotsOfLittleMen">
 
@@ -537,7 +536,7 @@ document.getElementById('demo2').innerHTML = manString2;
      var counts_cause = d3.nest()
       .key(function(d) { return d.cause_short; })
       .rollup(function(v) { return v.length; })
-      .entries();
+      .entries(police);
 
      var x_scale_cause = d3.scaleLinear().domain([0, d3.max(counts_cause, function(d) { return d.value; })]).range([0, width]);
      var y_scale_cause = d3.scaleBand().domain(counts_cause.map(function(d) { return d.key; })).range([height, 0]).padding(0.1);
@@ -615,15 +614,15 @@ var stateData;
     scalePolice2015 = d3.scaleQuantize().domain([0,maxPolice2015]).range(range);
     scaleCiv2015 = d3.scaleQuantize().domain([0,maxCiv2015]).range(range1);
 
-    showMap("#policeOfficer2015", scaleCiv2015, "PoliceOfficer", policeCount2015, 2015);
-    showMap("#civilian2015", scaleCiv2015, "Civilian", civCount2015, 2015);
+    showMap("#policeOfficer2015", scaleCiv2015, "PoliceOfficer", policeCount2015, 2015,stateData);
+    showMap("#civilian2015", scaleCiv2015, "Civilian", civCount2015, 2015,stateData);
 
     //get police and civ data for 2016
     policeCount2016 = getPolice(2016, police, stateCountData);
     civCount2016 = getCiv(16, civilian, stateCountData);
 
-    showMap("#policeOfficer2016", scaleCiv2015, "PoliceOfficer", policeCount2016, 2016);
-    showMap("#civilian2016", scaleCiv2015, "Civilian", civCount2016, 2016);
+    showMap("#policeOfficer2016", scaleCiv2015, "PoliceOfficer", policeCount2016, 2016, stateData);
+    showMap("#civilian2016", scaleCiv2015, "Civilian", civCount2016, 2016, stateData);
   });
 
 
@@ -687,7 +686,7 @@ var pathGenerator = d3.geoPath().projection(projection);
 var states;
 
 //displays the map, fills in according to scale, adds legend and labels
-function showMap(id, scale, variable, stateCount, year) {
+function showMap(id, scale, variable, stateCount, year, stateData) {
   var svg = d3.select(id)
   .append("svg")
   .attr("width", 500)
@@ -730,6 +729,16 @@ function showMap(id, scale, variable, stateCount, year) {
   })
   .attr("d", function (state) {
     return pathGenerator(state);
+  })
+   .on("click", function (state){
+    var currID = state.id;
+
+     var abbrev; 
+     stateData.forEach(function(d){
+       if (currID == d.key)
+        abbrev = d.value.abbreviation;
+    });
+     console.log(abbrev);
   })
   .on("mouseover", function (state) {
     d3.select(this)
