@@ -169,9 +169,9 @@
 }
 </style> -->
 
-<button id="civ" onclick="datafinder15()" type="button">2015</button>
+<button id="civ" onclick="button15()" type="button">2015</button>
 
-<button id="pol" onclick="datafinder16()" type="button">2016</button></br>
+<button id="pol" onclick="button16()" type="button">2016</button></br>
 
 
 <!-- <p id="demop"></p>
@@ -210,7 +210,7 @@ var stateData;
   var policeCount2015;
   var civCount2015;
   var policeCount2016;
-  var policeCount2016;
+  var civCount2016;
 
   //color range
   var range1 = ['#E0ECF6','#D0E2F1', '#C0D8EC','#B0CFE8','#A1C5E3', '#89B6DC', '#81B2D9', '#72A8D5',
@@ -227,149 +227,45 @@ d3.queue()
 .defer(d3.json, "stateNames.json")
 .defer(d3.json, "civilians_death.json")
 .defer(d3.json, "police_death.json")
+
 .await(function (error, rawMap, rawStates, civilian, police) {
+  datafinder15(civilian,police);
+  datafinder16(civilian,police);
+  clear();
+states = topojson.feature(rawMap, rawMap.objects.states);
 
+    //fill stateCountData
+    stateData = d3.entries(rawStates);
+    stateData.forEach(function(d){
+      stateCountData.push({
+        key: d.key,
+        abbrev: d.value.abbreviation,
+        po: 0, //store police officer death
+        civ: 0 //store civilian death
+      });
+    });
+    //get police and civ data for 2015
+    policeCount2015 = getPolice(2015, police, stateCountData);
+    civCount2015 = getCiv(15, civilian, stateCountData);
 
+    var maxPolice2015 = getMaxPolice(policeCount2015);
+    var maxCiv2015 = getMaxCiv(civCount2015);
 
-function datafinder15(){
-var civdeaths=[];
-var cdeath2015=[];
-var cdeath2016=[];
+    scalePolice2015 = d3.scaleQuantize().domain([0,maxPolice2015]).range(range2);
+    scaleCiv2015 = d3.scaleQuantize().domain([0,maxCiv2015]).range(range1);
 
+    showMap("#map", scalePolice2015, "PoliceOfficer", policeCount2015, 2015,stateData);
 
-d3.json("cod.json", function(data) {
-  data.forEach(function(d) {
-    if (d.date.includes("/15")){
-      cdeath2015.push(d);
-    }
-    else if (d.date.includes("/16")){
-      cdeath2016.push(d);
-    }
+    showMap("#policeOfficer2015", scalePolice2015, "PoliceOfficer", policeCount2015, 2015,stateData);
 
-    civdeaths.push(d)
+    showMap("#civilian2015", scaleCiv2015, "Civilian", civCount2015, 2015,stateData);
 
-  });
+    //get police and civ data for 2016
+    policeCount2016 = getPolice(2016, police, stateCountData);
+    civCount2016 = getCiv(16, civilian, stateCountData);
 
-  document.getElementById('demop').innerHTML = "Number of Civilians Dead: "+ cdeath2015.length.toString();
-
-
-var man = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="red"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
-
-
-var manString = "";
-for (var i=0;i<cdeath2015.length;i++){
-    manString += '<svg id="man' +i + '"';
-    if(i>cdeath2015.length){manString+="style='opacity:0;'";}
-    manString += man;
-    if(i%15 == 14){manString+="</br>";}
-}
-document.getElementById('demo').innerHTML = manString;
-
-});
-var policedeaths=[];
-var pdeath2015=[];
-var pdeath2016=[];
-d3.json("pod.json", function(data) {
-  data.forEach(function(d2) {
-    if (d2.date.includes("/15")){
-      pdeath2015.push(d2);
-    }
-    else if (d2.date.includes("/16")){
-      pdeath2016.push(d2);
-    }
-    policedeaths.push(d2)
-  });
-   document.getElementById('demo2p').innerHTML = "Number of Police Dead: "+ pdeath2015.length.toString();
-
-var man2 = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="blue"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
-
-
-var manString2 = "";
-for (var i=0;i<pdeath2015.length;i++){
-    manString2 += '<svg id="man' +i + '"';
-    if(i>pdeath2015.length){manString2+="style='opacity:0;'";}
-    manString2 += man2;
-    if(i%15 == 14){manString2+="</br>";}
-}
-
-document.getElementById('demo2').innerHTML = manString2;
-
-
-
-});
-}
-
-
-
-function datafinder16(){
-var civdeaths=[];
-var cdeath2015=[];
-var cdeath2016=[];
-
-
-d3.json("cod.json", function(data) {
-  data.forEach(function(d) {
-    if (d.date.includes("/15")){
-      cdeath2015.push(d);
-    }
-    else if (d.date.includes("/16")){
-      cdeath2016.push(d);
-    }
-
-    civdeaths.push(d)
-
-  });
-
-  document.getElementById('demop').innerHTML = "Number of Civilians Dead: "+ cdeath2016.length.toString();
-
-
-var man = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="red"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
-
-
-var manString = "";
-for (var i=0;i<cdeath2016.length;i++){
-    manString += '<svg id="man' +i + '"';
-    if(i>cdeath2016.length){manString+="style='opacity:0;'";}
-    manString += man;
-    if(i%15 == 14){manString+="</br>";}
-}
-document.getElementById('demo').innerHTML = manString;
-
-});
-var policedeaths=[];
-var pdeath2015=[];
-var pdeath2016=[];
-d3.json("pod.json", function(data) {
-  data.forEach(function(d2) {
-    if (d2.date.includes("/15")){
-      pdeath2015.push(d2);
-    }
-    else if (d2.date.includes("/16")){
-      pdeath2016.push(d2);
-    }
-    policedeaths.push(d2)
-  });
-
-   document.getElementById('demo2p').innerHTML = "Number of Police Dead: "+ pdeath2016.length.toString();
-
-var man2 = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="blue"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
-
-
-var manString2 = "";
-for (var i=0;i<pdeath2016.length;i++){
-    manString2 += '<svg id="man' +i + '"';
-    if(i>pdeath2016.length){manString2+="style='opacity:0;'";}
-    manString2 += man2;
-    if(i%15 == 14){manString2+="</br>";}
-}
-
-document.getElementById('demo2').innerHTML = manString2;
-
-
-
-});
-
-}
+    showMap("#policeOfficer2016", scalePolice2015, "PoliceOfficer", policeCount2016, 2016, stateData);
+    showMap("#civilian2016", scaleCiv2015, "Civilian", civCount2016, 2016, stateData);
 
     var svg = d3.select("#armed_svg"),
       margin = {top: 20, right: 20, bottom: 30, left: 150},
@@ -377,7 +273,7 @@ document.getElementById('demo2').innerHTML = manString2;
       height = +svg.attr("height") - margin.top - margin.bottom;
 
     var g = svg.append("g")
-   		 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var tooltip = d3.select("body").append("div").attr("class", "toolTip");
 
@@ -385,6 +281,7 @@ document.getElementById('demo2').innerHTML = manString2;
     selectByStates = d3.nest()
     .key(function(d) { return d.state; })
     .entries(civilian);
+
 
 
       var count_gun = civilian.filter(function(value){return value.armed==="gun"&&  1/01/15<value.date<12/30/15}).length;
@@ -424,7 +321,7 @@ document.getElementById('demo2').innerHTML = manString2;
               .style("display", "inline-block")
               .html((d.armed) + "<br>" + (d.value) + " cases");
         })
-    		.on("mouseout", function(d){ tooltip.style("display", "none");});
+        .on("mouseout", function(d){ tooltip.style("display", "none");});
 
       g.append("g")
       .attr("class", "y_axis")
@@ -433,8 +330,8 @@ document.getElementById('demo2').innerHTML = manString2;
       g.append("g")
         .data(counts_armed)
         .attr("class", "x_axis")
-       	.attr("transform", "translate(0," + height + ")")
-      	.call(d3.axisBottom(x_scale).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x_scale).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
 
 
     var svg1 = d3.select("#gender_svg"),
@@ -522,7 +419,7 @@ document.getElementById('demo2').innerHTML = manString2;
              .style("display", "inline-block")
              .html((d.race) + "<br>" + (d.value) + " cases");
        })
-    		.on("mouseout", function(d){ tooltip.style("display", "none");});
+        .on("mouseout", function(d){ tooltip.style("display", "none");});
 
      g_race.append("g")
      .attr("class", "y_axis")
@@ -531,8 +428,8 @@ document.getElementById('demo2').innerHTML = manString2;
      g_race.append("g")
        .data(counts_race)
        .attr("class", "x_axis")
-      	.attr("transform", "translate(0," + height + ")")
-     	.call(d3.axisBottom(x_scale_race).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
+        .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x_scale_race).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
 
 
     var svg3 = d3.select("#police_svg"),
@@ -548,6 +445,8 @@ document.getElementById('demo2').innerHTML = manString2;
       .key(function(d) { return d.cause_short; })
       .rollup(function(v) { return v.length; })
       .entries(police);
+
+      console.log(counts_cause);
 
      var x_scale_cause = d3.scaleLinear().domain([0, d3.max(counts_cause, function(d) { return d.value; })]).range([0, width]);
      var y_scale_cause = d3.scaleBand().domain(counts_cause.map(function(d) { return d.key; })).range([height, 0]).padding(0.1);
@@ -569,7 +468,7 @@ document.getElementById('demo2').innerHTML = manString2;
              .style("display", "inline-block")
              .html((d.key) + "<br>" + (d.value) + " cases");
        })
-    		.on("mouseout", function(d){ tooltip.style("display", "none");});
+        .on("mouseout", function(d){ tooltip.style("display", "none");});
 
      g_cause.append("g")
      .attr("class", "y_axis")
@@ -579,48 +478,218 @@ document.getElementById('demo2').innerHTML = manString2;
        .data(counts_cause)
        .attr("class", "x_axis")
        .attr("transform", "translate(0," + height + ")")
-     	 .call(d3.axisBottom(x_scale_cause).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
-
-
-
-
-
-
-    states = topojson.feature(rawMap, rawMap.objects.states);
-
-    //fill stateCountData
-    stateData = d3.entries(rawStates);
-    stateData.forEach(function(d){
-      stateCountData.push({
-        key: d.key,
-        abbrev: d.value.abbreviation,
-        po: 0, //store police officer death
-        civ: 0 //store civilian death
-      });
-    });
-    //get police and civ data for 2015
-    policeCount2015 = getPolice(2015, police, stateCountData);
-    civCount2015 = getCiv(15, civilian, stateCountData);
-
-    var maxPolice2015 = getMaxPolice(policeCount2015);
-    var maxCiv2015 = getMaxCiv(civCount2015);
-
-    scalePolice2015 = d3.scaleQuantize().domain([0,maxPolice2015]).range(range2);
-    scaleCiv2015 = d3.scaleQuantize().domain([0,maxCiv2015]).range(range1);
-
-    showMap("#map", scalePolice2015, "PoliceOfficer", policeCount2015, 2015,stateData);
-
-    showMap("#policeOfficer2015", scalePolice2015, "PoliceOfficer", policeCount2015, 2015,stateData);
-
-    showMap("#civilian2015", scaleCiv2015, "Civilian", civCount2015, 2015,stateData);
-
-    //get police and civ data for 2016
-    policeCount2016 = getPolice(2016, police, stateCountData);
-    civCount2016 = getCiv(16, civilian, stateCountData);
-
-    showMap("#policeOfficer2016", scalePolice2015, "PoliceOfficer", policeCount2016, 2016, stateData);
-    showMap("#civilian2016", scaleCiv2015, "Civilian", civCount2016, 2016, stateData);
+       .call(d3.axisBottom(x_scale_cause).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
   });
+
+
+
+var finalarray15=[];
+var finalarray16=[];
+
+
+
+
+
+function datafinder15(civilian,police){
+
+var civdeaths=[];
+var cdeath2015=[];
+var cdeath2016=[];
+
+var policedeaths=[];
+var pdeath2015=[];
+var pdeath2016=[];
+
+var manString = "";
+var manString2 = "";
+
+
+
+
+
+
+  civilian.forEach(function(d) {
+    civdeaths.push(d);
+
+    if (d.date.slice(-2).includes("15")){
+      cdeath2015.push(d);
+    }
+    else if (d.date.slice(-2).includes("16")){
+      cdeath2016.push(d);
+    }
+
+
+  });
+
+
+
+
+var man = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="red"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
+
+
+
+for (var i=0;i<cdeath2015.length;i++){
+    manString += '<svg id="man' +i + '"';
+    if(i>cdeath2015.length){manString+="style='opacity:0;'";}
+    manString += man;
+    if(i%15 == 14){manString+="</br>";}
+}
+
+
+
+  police.forEach(function(d2) {
+
+    if (d2.date.slice(-2).includes("15")){
+      pdeath2015.push(d2);
+    }
+    else if (d2.date.slice(-2).includes("16")){
+      pdeath2016.push(d2);
+    }
+    policedeaths.push(d2)
+  });
+
+
+var man2 = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="blue"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
+
+
+
+for (var i=0;i<pdeath2015.length;i++){
+    manString2 += '<svg id="man' +i + '"';
+    if(i>pdeath2015.length){manString2+="style='opacity:0;'";}
+    manString2 += man2;
+    if(i%15 == 14){manString2+="</br>";}
+}
+  document.getElementById('demop').innerHTML = "Number of Civilians Dead: "+ cdeath2015.length.toString();
+  document.getElementById('demo2p').innerHTML = "Number of Police Dead: "+ pdeath2015.length.toString();
+  document.getElementById('demo').innerHTML = manString;
+  document.getElementById('demo2').innerHTML = manString2;
+  finalarray15.push("Number of Civilians Dead: "+ cdeath2015.length.toString());
+  finalarray15.push("Number of Police Dead: "+ pdeath2015.length.toString());
+  finalarray15.push(manString);
+  finalarray15.push(manString2);
+  return finalarray15;
+}
+
+function button15(){
+  document.getElementById('demop').innerHTML = finalarray15[0];
+  document.getElementById('demo2p').innerHTML = finalarray15[1];
+  document.getElementById('demo').innerHTML = finalarray15[2];
+  document.getElementById('demo2').innerHTML = finalarray15[3];
+}
+
+function button16(){
+  document.getElementById('demop').innerHTML = finalarray16[0];
+  document.getElementById('demo2p').innerHTML = finalarray16[1];
+  document.getElementById('demo').innerHTML = finalarray16[2];
+  document.getElementById('demo2').innerHTML = finalarray16[3];
+}
+
+
+function clear(){
+  document.getElementById('demop').innerHTML = "";
+  document.getElementById('demo2p').innerHTML = "";
+  document.getElementById('demo').innerHTML = "";
+  document.getElementById('demo2').innerHTML = "";
+}
+
+
+function datafinder16(civilian,police){
+
+var civdeaths=[];
+var cdeath2015=[];
+var cdeath2016=[];
+
+var policedeaths=[];
+var pdeath2015=[];
+var pdeath2016=[];
+
+var manString = "";
+var manString2 = "";
+
+var finalarray=[];
+
+
+
+
+  civilian.forEach(function(d) {
+    civdeaths.push(d);
+
+    if (d.date.slice(-2).includes("15")){
+      cdeath2015.push(d);
+    }
+    else if (d.date.slice(-2).includes("16")){
+      cdeath2016.push(d);
+    }
+
+
+  });
+
+
+
+
+var man = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="red"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
+
+
+
+for (var i=0;i<cdeath2016.length;i++){
+    manString += '<svg id="man' +i + '"';
+    if(i>cdeath2016.length){manString+="style='opacity:0;'";}
+    manString += man;
+    if(i%15 == 14){manString+="</br>";}
+}
+
+
+
+  police.forEach(function(d2) {
+
+    if (d2.date.slice(-2).includes("15")){
+      pdeath2015.push(d2);
+    }
+    else if (d2.date.slice(-2).includes("16")){
+      pdeath2016.push(d2);
+    }
+    policedeaths.push(d2)
+  });
+
+
+var man2 = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="blue"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
+
+
+
+for (var i=0;i<pdeath2016.length;i++){
+    manString2 += '<svg id="man' +i + '"';
+    if(i>pdeath2016.length){manString2+="style='opacity:0;'";}
+    manString2 += man2;
+    if(i%15 == 14){manString2+="</br>";}
+}
+  document.getElementById('demop').innerHTML = "Number of Civilians Dead: "+ cdeath2016.length.toString();
+  document.getElementById('demo2p').innerHTML = "Number of Police Dead: "+ pdeath2016.length.toString();
+  document.getElementById('demo').innerHTML = manString;
+  document.getElementById('demo2').innerHTML = manString2;
+  finalarray16.push("Number of Civilians Dead: "+ cdeath2016.length.toString());
+  finalarray16.push("Number of Police Dead: "+ pdeath2016.length.toString());
+  finalarray16.push(manString);
+  finalarray16.push(manString2);
+  return finalarray16;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //get all police officer death counts by year
@@ -683,11 +752,11 @@ var pathGenerator = d3.geoPath().projection(projection);
 var states;
 
 function getCivInfoStates(){
+  console.log(selectByStates);
   var chosenState = selectByStates.filter(function(value){return value.key=== abbrev });
-  console.log(chosenState);
-  var getArmed = d3.nest()
-  .key(function(d) { return d.armed; })
-  .entries(chosenState);
+  console.log(chosenState[0].values);
+
+
 }
 
 var clicked = false;
@@ -724,6 +793,7 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
   .attr("stroke-width", 0.5)
   .style("fill", function (state) {
     var id = state.id;
+    //console.log(stateCount);
     for (var i = 0; i < stateCount.length; i++){
       var stateID = stateCount[i].key;
       if (id == stateID){
@@ -743,7 +813,6 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
 
   if (!clicked){
       orgColor = currentState.style("fill");
-      console.log(orgColor);
 
       currentState
       .style("fill","rgb(169, 169, 169)");
@@ -763,7 +832,6 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
 
     //select something that is not 
     //the original state
-    console.log(orgColor);
     console.log(currentState.style("fill"));
     if  (currentState.style("fill") == 'rgb(169, 169, 169)'){
       currentState.style("fill", orgColor);
@@ -775,9 +843,6 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
 
   }
   
-  })
-  .on("dblclick", function (state){
-    console.log("DOBULE CLIEKCED STATE");
   })
   .on("mouseover", function (state) {
     d3.select(this)
@@ -876,8 +941,8 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
 function scaleTo(map, variable, scale, year){
   var svg = d3.select(map);
 
+  //find count for specific variable and year
   var count = getCount(variable,year);
-  console.log(count);
 
   var div = d3.select("body").append("div")
   .attr("class", "tooltip")
@@ -897,7 +962,7 @@ function scaleTo(map, variable, scale, year){
     }
   })
 .on("mouseover", function (state){
-d3.select(this)
+  d3.select(this)
     .attr("stroke","black")
 
     var state;
