@@ -769,8 +769,8 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
   .attr("height", 400);
 
   svg.append("text")
-  .attr("id", "name")
-  .attr("x", 300)
+  .attr("id", "title")
+  .attr("x", 130)
   .attr("y", 50)
   .style("font-size", "16px");
 
@@ -924,22 +924,24 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
   }
 
   //titles
-  svg.append("text")
-  .attr("x", 120)
-  .attr("y", 30)
-  .attr("text-anchor", "middle")
-  .style("font-size", "20px")
-  .text(function(){
-    if (variable == "PoliceOfficer")
-      return "Police Officer Deaths " + year;
-    else
-      return "Civilian Deaths " + year;
-  });
+  var text = (variable == "PoliceOfficer") ? "Police Officer Deaths " + year : "Civilian Deaths " + year;
+
+  svg.select("#title")
+      .text(text)
+      .transition()
+      .duration(200);
 }
 
 //scales the @param variable graph to @param scale in @param year with @param scale
 function scaleTo(map, variable, scale, year){
   var svg = d3.select(map);
+
+  var text = (variable == "police") ? "Police Officer Deaths " + year : "Civilian Deaths " + year;
+
+  svg.select("#title")
+      .text(text)
+      .transition()
+      .duration(200);
 
   //find count for specific variable and year
   var count = getCount(variable,year);
