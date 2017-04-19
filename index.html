@@ -211,12 +211,17 @@
 <svg id=police_svg width="960" height="500"></svg>
 
 <script id="notes">
+var selectByStates;
+var abbrev;
+
 d3.queue()
 .defer(d3.json, "us.json")
 .defer(d3.json, "stateNames.json")
 .defer(d3.json, "civilians_death.json")
 .defer(d3.json, "police_death.json")
 .await(function (error, rawMap, rawStates, civilian, police) {
+
+
 
 function datafinder15(){
 var civdeaths=[];
@@ -369,10 +374,10 @@ document.getElementById('demo2').innerHTML = manString2;
     var tooltip = d3.select("body").append("div").attr("class", "toolTip");
 
 
-      var selectByStates = d3.nest()
-        .key(function(d) { return d.state; })
-        .entries(civilian);
-      console.log(selectByStates);
+    selectByStates = d3.nest()
+    .key(function(d) { return d.state; })
+    .entries(civilian);
+
 
       var count_gun = civilian.filter(function(value){return value.armed==="gun"&&  1/01/15<value.date<12/30/15}).length;
       var count_unarmed = civilian.filter(function(value){return value.armed==="unarmed"}).length;
@@ -530,8 +535,6 @@ document.getElementById('demo2').innerHTML = manString2;
     var g_cause = svg3.append("g")
        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    var stateChosen = d3.nest()
-      .key(function(d) {return d.statename; })
 
      var counts_cause = d3.nest()
       .key(function(d) { return d.cause_short; })
@@ -685,6 +688,15 @@ var projection = d3.geoAlbersUsa().scale(75);
 var pathGenerator = d3.geoPath().projection(projection);
 var states;
 
+function getCivInfoStates(){
+  var chosenState = selectByStates.filter(function(value){return value.key=== abbrev });
+  console.log(chosenState);
+  var getArmed = d3.nest()
+  .key(function(d) { return d.armed; })
+  .entries(chosenState);
+}
+
+
 //displays the map, fills in according to scale, adds legend and labels
 function showMap(id, scale, variable, stateCount, year, stateData) {
   var svg = d3.select(id)
@@ -733,12 +745,13 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
    .on("click", function (state){
     var currID = state.id;
 
-     var abbrev; 
+
      stateData.forEach(function(d){
        if (currID == d.key)
         abbrev = d.value.abbreviation;
     });
      console.log(abbrev);
+     getCivInfoStates();
   })
   .on("mouseover", function (state) {
     d3.select(this)
