@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head>
+  <title>INFO 3300 Project 2 </title>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="http://d3js.org/topojson.v2.min.js"></script>
+  <style>
+  .bar {
+	fill: steelblue;
+  }
+  .bar:hover {
+  	fill: orange;
+  }
+  .axis {
+    font: 10px sans-serif;
+  }
+  .x_axis path,
+  .x_axis line {
+  fill: none;
+  stroke: #D4D8DA;
+  stroke-width: 1px;
+  }
+  .y_axis{
+    padding-left: 10px;
+  }
+  .svg{
+    padding-left: 10px;
+    margin-left: 5px;
+  }
+  .g{
+    margin-left: 5px;
+  }
+  .x_axis path {
+	display: none;
+  }
+  .toolTip {
+	position: absolute;
+  display: none;
+  min-width: 80px;
+  height: auto;
+  background: none repeat scroll 0 0 #ffffff;
+  border: 1px solid #6F257F;
+  padding: 14px;
+  text-align: center;
+  }
+  </style>
+</head>
+<body>
+  <h1>Armed Stats</h1>
+  <svg id=armed_svg width="960" height="500"></svg>
+  <script>
+    var svg = d3.select("#armed_svg"),
+      margin = {top: 20, right: 20, bottom: 30, left: 150},
+      width = +svg.attr("width") - margin.left - margin.right,
+      height = +svg.attr("height") - margin.top - margin.bottom;
+
+    var g = svg.append("g")
+   		 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var tooltip = d3.select("body").append("div").attr("class", "toolTip");
+
+    d3.json("civilians_death.json", function(data){
+      console.log(data[0]);
+      var count_gun = data.filter(function(value){return value.armed==="gun"&&  1/01/15<value.date<12/30/15}).length;
+      var count_unarmed = data.filter(function(value){return value.armed==="unarmed"}).length;
+      var count_vehicle = data.filter(function(value){return value.armed==="vehicle"}).length;
+      var count_knife = data.filter(function(value){return value.armed==="knife"}).length;
+      var count_toy_weapon = data.filter(function(value){return value.armed==="toy weapon" }).length;
+      var count_undetermined = data.filter(function(value){return value.armed==="undetermined" &&  1/01/15<value.date<12/30/15 }).length;
+      var count_other = data.filter(function(value){
+        if(value.armed==="gun" || value.armed==="unarmed" || value.armed==="vehicle" || value.armed ==="knife" || value.armed ==="toy weapon" || value.armed ==="undetermined"){
+          return false;
+        }
+        return true;
+      }).length;
+      console.log(count_other);
+
+      var counts_armed = [{"armed":"Gun","value":count_gun},{"armed":"Knife","value":count_knife}, {"armed":"Unarmed","value":count_unarmed},
+      {"armed":"Vehicle","value":count_vehicle}, {"armed":"Toy Weapon","value":count_toy_weapon}, {"armed":"Undetermined","value":count_undetermined}, {"armed":"Other", "value":count_other}];
+      console.log(counts_armed);
+      var x_scale = d3.scaleLinear().domain([0, d3.max(counts_armed, function(d) { return d.value; })]).range([0, width]);
+      var y_scale = d3.scaleBand().domain(counts_armed.map(function(d) { return d.armed; })).range([height, 0]).padding(0.1);
+
+      //Creating horizontal bar graph for Armed
+
+      var bars = g.selectAll(".bar")
+        .data(counts_armed)
+        .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", 0)
+        .attr("height", y_scale.bandwidth())
+        .attr("y", function(d) { return y_scale(d.armed); })
+        .attr("width", function(d) { return x_scale(d.value); })
+        .on("mousemove", function(d){
+            tooltip
+              .style("left", d3.event.pageX - 50 + "px")
+              .style("top", d3.event.pageY - 70 + "px")
+              .style("display", "inline-block")
+              .html((d.armed) + "<br>" + (d.value) + " cases");
+        })
+    		.on("mouseout", function(d){ tooltip.style("display", "none");});
+
+      g.append("g")
+      .attr("class", "y_axis")
+      .call(d3.axisLeft(y_scale));
+
+      g.append("g")
+        .data(counts_armed)
+        .attr("class", "x_axis")
+       	.attr("transform", "translate(0," + height + ")")
+      	.call(d3.axisBottom(x_scale).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
+    })
+  </script>
+
+  <h1>Gender Stats</h1>
+  <svg id=gender_svg width="960" height="500"></svg>
+  <script>
+    var svg1 = d3.select("#gender_svg"),
+      margin = {top: 20, right: 20, bottom: 30, left: 150},
+      width = +svg.attr("width") - margin.left - margin.right,
+      height = +svg.attr("height") - margin.top - margin.bottom;
+    var g_gender = svg1.append("g")
+       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    d3.json("civilians_death.json", function(data){
+      console.log(data[0]);
+      var count_male = data.filter(function(value){return value.gender==="M"}).length;
+      var count_female = data.filter(function(value){return value.gender==="F"}).length;
+
+      var counts_gender = [{"gender":"Male","value":count_male},{"gender":"Female","value":count_female}];
+      var x_scale_gender = d3.scaleLinear().domain([0, d3.max(counts_gender, function(d) { return d.value; })]).range([0, width]);
+      var y_scale_gender = d3.scaleBand().domain(counts_gender.map(function(d) { return d.gender; })).range([height, 0]).padding(0.1);
+
+      //Creating horizontal bar graph for gender
+
+      var bars_gender = g_gender.selectAll(".bar")
+        .data(counts_gender)
+        .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", 0)
+        .attr("height", y_scale_gender.bandwidth())
+        .attr("y", function(d) { return y_scale_gender(d.gender); })
+        .attr("width", function(d) { return x_scale_gender(d.value); })
+        .on("mousemove", function(d){
+            tooltip
+              .style("left", d3.event.pageX - 50 + "px")
+              .style("top", d3.event.pageY - 70 + "px")
+              .style("display", "inline-block")
+              .html((d.gender) + "<br>" + (d.value) + " cases");
+        })
+        .on("mouseout", function(d){ tooltip.style("display", "none");});
+
+      g_gender.append("g")
+      .attr("class", "y_axis")
+      .call(d3.axisLeft(y_scale_gender));
+
+      g_gender.append("g")
+        .data(counts_gender)
+        .attr("class", "x_axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x_scale_gender).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
+    })
+  </script>
+  <h1>Race stats</h1>
+  <svg id=race_svg width="960" height="500"></svg>
+  <script>
+    var svg2 = d3.select("#race_svg"),
+      margin = {top: 20, right: 20, bottom: 30, left: 150},
+      width = +svg.attr("width") - margin.left - margin.right,
+      height = +svg.attr("height") - margin.top - margin.bottom;
+
+    var g_race = svg2.append("g")
+       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    d3.json("civilians_death.json", function(data){
+     console.log(data[0]);
+     var count_asian = data.filter(function(value){return value.race==="A"}).length;
+     var count_black = data.filter(function(value){return value.race==="B"}).length;
+     var count_hispanic = data.filter(function(value){return value.race==="H"}).length;
+     var count_native = data.filter(function(value){return value.race==="N"}).length;
+     var count_white = data.filter(function(value){return value.race==="W" }).length;
+     var count_other_race = data.filter(function(value){return value.race==="O"}).length;
+
+     var counts_race = [{"race":"Asian","value":count_asian},{"race":"Black","value":count_black}, {"race":"Hispanic","value":count_hispanic},
+     {"race":"Native American","value":count_native}, {"race":"White","value":count_white}, {"race":"Other","value":count_other_race}];
+
+     var x_scale_race = d3.scaleLinear().domain([0, d3.max(counts_race, function(d) { return d.value; })]).range([0, width]);
+     var y_scale_race = d3.scaleBand().domain(counts_race.map(function(d) { return d.race; })).range([height, 0]).padding(0.1);
+
+     //Creating horizontal bar graph for race
+
+     var bars_race = g_race.selectAll(".bar")
+       .data(counts_race)
+       .enter().append("rect")
+       .attr("class", "bar")
+       .attr("x", 0)
+       .attr("height", y_scale_race.bandwidth())
+       .attr("y", function(d) { return y_scale_race(d.race); })
+       .attr("width", function(d) { return x_scale_race(d.value); })
+       .on("mousemove", function(d){
+           tooltip
+             .style("left", d3.event.pageX - 50 + "px")
+             .style("top", d3.event.pageY - 70 + "px")
+             .style("display", "inline-block")
+             .html((d.race) + "<br>" + (d.value) + " cases");
+       })
+    		.on("mouseout", function(d){ tooltip.style("display", "none");});
+
+     g_race.append("g")
+     .attr("class", "y_axis")
+     .call(d3.axisLeft(y_scale_race));
+
+     g_race.append("g")
+       .data(counts_race)
+       .attr("class", "x_axis")
+      	.attr("transform", "translate(0," + height + ")")
+     	.call(d3.axisBottom(x_scale_race).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
+    })
+
+  </script>
+
+  <h1>Police Officer Death</h1>
+  <svg id=police_svg width="960" height="500"></svg>
+  <script>
+    var svg3 = d3.select("#police_svg"),
+      margin = {top: 20, right: 20, bottom: 30, left: 150},
+      width = +svg.attr("width") - margin.left - margin.right,
+      height = +svg.attr("height") - margin.top - margin.bottom;
+
+    var g_cause = svg3.append("g")
+       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    d3.json("police_death.json", function(data){
+     console.log(data[0]);
+     var counts_cause = d3.nest()
+      .key(function(d) { return d.cause_short; })
+      .rollup(function(v) { return v.length; })
+      .entries(data);
+    console.log(counts_cause);
+     var cause_list =[]
+     var count_1 = data.filter(function(value){return value.cause_short==="9/11 related illness"}).length;
+     var count_2 = data.filter(function(value){return value.cause_short==="Accidental"}).length;
+     var count_3 = data.filter(function(value){return value.cause_short==="Aircraft accident"}).length;
+     var count_4 = data.filter(function(value){return value.cause_short==="Animal related"}).length;
+     var count_5 = data.filter(function(value){return value.cause_short==="Asphyxiation"}).length;
+     var count_6 = data.filter(function(value){return value.cause_short==="Assault"}).length;
+     var count_7 = data.filter(function(value){return value.cause_short==="Automobile accident"}).length;
+     var count_8 = data.filter(function(value){return value.cause_short==="Bomb"}).length;
+     var count_9 = data.filter(function(value){return value.cause_short==="Drowned"}).length;
+     var count_10 = data.filter(function(value){return value.cause_short==="Duty related illness"}).length;
+     var count_11 = data.filter(function(value){return value.cause_short==="Fall"}).length;
+     var count_12 = data.filter(function(value){return value.cause_short==="Fire"}).length;
+     var count_13 = data.filter(function(value){return value.cause_short==="Gunfire"}).length;
+     var count_14 = data.filter(function(value){return value.cause_short==="Gunfire (Accidental)"}).length;
+     var count_15 = data.filter(function(value){return value.cause_short==="Heart attack"}).length;
+
+
+     var x_scale_cause = d3.scaleLinear().domain([0, d3.max(counts_cause, function(d) { return d.value; })]).range([0, width]);
+     var y_scale_cause = d3.scaleBand().domain(counts_cause.map(function(d) { return d.key; })).range([height, 0]).padding(0.1);
+
+     //Creating horizontal bar graph for Police deaths
+
+     var bars_cause = g_cause.selectAll(".bar")
+       .data(counts_cause)
+       .enter().append("rect")
+       .attr("class", "bar")
+       .attr("x", 0)
+       .attr("height", y_scale_cause.bandwidth())
+       .attr("y", function(d) { return y_scale_cause(d.key); })
+       .attr("width", function(d) { return x_scale_cause(d.value); })
+       .on("mousemove", function(d){
+           tooltip
+             .style("left", d3.event.pageX - 50 + "px")
+             .style("top", d3.event.pageY - 70 + "px")
+             .style("display", "inline-block")
+             .html((d.key) + "<br>" + (d.value) + " cases");
+       })
+    		.on("mouseout", function(d){ tooltip.style("display", "none");});
+
+     g_cause.append("g")
+     .attr("class", "y_axis")
+     .call(d3.axisLeft(y_scale_cause));
+
+     g_cause.append("g")
+       .data(counts_cause)
+       .attr("class", "x_axis")
+       .attr("transform", "translate(0," + height + ")")
+     	 .call(d3.axisBottom(x_scale_cause).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
+    })
+
+  </script>
+
+</body>
+</html>
