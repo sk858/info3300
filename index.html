@@ -8,8 +8,8 @@
   <script src="http://d3js.org/topojson.v2.min.js"></script>
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
   <style>
-    .mid{
-    padding-left:160px;
+  #menu{
+    text-align: center;
   }
   .block {
     /*border: solid white 1px; */
@@ -42,12 +42,14 @@
     background-color: white;
     border: 1px solid #2A618D;
     color: #2A618D;
-    padding: 10px 30px;
+    width:150px;
+    padding: 10px 25px;
     margin:10px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
+    font-family: 'Source Sans Pro',sans-serif;
 }
 
 .button:hover{
@@ -131,12 +133,12 @@
 </style>
 </head>
 <body>
-<div id="menu">
+<p id="menu">
 <input id="b2015" class="button selected" type="button" value="2015" />
 <input id="b2016" class="button" type="button" value="2016" /><br>
 <input id="po" class="button selected" type="button" value="Police Officer" />
 <input id="civi" class="button" type="button" value="Civilian" />
-</div>
+</p>
 
 <p class="block" id="map"></p>
 
@@ -149,12 +151,10 @@
 <br><br><br>
 
 <h2>Police Officer Deaths</h2>
-<input id="scaleCiv" class="button" type="button" value="Scale Police Officer"   />
 <div class="mid">
   <p class="block" id="policeOfficer2015"></p>
   <p class="block" id="policeOfficer2016"></p>
 </div>
-
 
   <h2 id="title">Police Officer Deaths vs. Civilian Deaths</h2>
 <div id="lotsOfLittleMen">
@@ -198,6 +198,8 @@
 <h1>Police Officer Death</h1>
 <svg id=police_svg width="960" height="500"></svg>
 
+<p id="lineChart"></p>
+
 <script id="notes">
 var selectByStates;
 var abbrev;
@@ -212,15 +214,13 @@ var stateData;
   var policeCount2016;
   var civCount2016;
 
-  //color range
-  var range1 = ['#E0ECF6','#D0E2F1', '#C0D8EC','#B0CFE8','#A1C5E3', '#89B6DC', '#81B2D9', '#72A8D5',
-  '#629FD0', '#5295CB', '#438BC7', '#3881BC', '#3476AD', '#2F6C9D', '#2A618D', '#26567E', '#214B6E',
-  '#1C415E', '#17364F', '#132B3F', '#0E202F','#09161F', '#050B10'];
+  var buttonArray = ["b2015","b2016", "po", "civi"];
 
-  var range = ['#E0ECF6','#B0CFE8','#A1C5E3', '#72A8D5', '#629FD0', '#5295CB', '#3476AD', '#2F6C9D',
+  //color range
+  var rangePo = ['#E0ECF6','#B0CFE8','#A1C5E3', '#72A8D5', '#629FD0', '#5295CB', '#3476AD', '#2F6C9D',
   '#214B6E', '#1C415E', '#17364F', '#132B3F','#050B10'];
 
-  var range2 = ['#C4E8CD','#A7DDB4','#89D19B', '#7BCC8F', '#6CC683','#5DC076','#3FA258', '#338448', '#286738', '#1D4928','#112C18','#0B1D10'];
+  var rangeCiv = ['#C4E8CD','#B6E2C1' ,'#A7DDB4','#89D19B', '#7BCC8F', '#6CC683','#5DC076', '#4FBA6A', '#3FA258', '#338448', '#286738', '#225830', '#1D4928','#173B20', '#112C18'];
 
 d3.queue()
 .defer(d3.json, "us.json")
@@ -251,8 +251,8 @@ states = topojson.feature(rawMap, rawMap.objects.states);
     var maxPolice2015 = getMaxPolice(policeCount2015);
     var maxCiv2015 = getMaxCiv(civCount2015);
 
-    scalePolice2015 = d3.scaleQuantize().domain([0,maxPolice2015]).range(range2);
-    scaleCiv2015 = d3.scaleQuantize().domain([0,maxCiv2015]).range(range1);
+    scalePolice2015 = d3.scaleQuantize().domain([0,maxPolice2015]).range(rangePo);
+    scaleCiv2015 = d3.scaleQuantize().domain([0,maxCiv2015]).range(rangeCiv);
 
     showMap("#map", scalePolice2015, "PoliceOfficer", policeCount2015, 2015,stateData);
 
@@ -755,12 +755,19 @@ function getCivInfoStates(){
   console.log(selectByStates);
   var chosenState = selectByStates.filter(function(value){return value.key=== abbrev });
   console.log(chosenState[0].values);
+}
 
+function createLegend(id, scale){
 
 }
 
-var clicked = false;
-var orgColor;
+  var oldState; //store old state
+  var oldStateID;
+  var currentState; //store state you just clicked on
+  var currentStateID;
+  var clicked = false;
+  var orgColor;
+
 //displays the map, fills in according to scale, adds legend and labels
 function showMap(id, scale, variable, stateCount, year, stateData) {
   var svg = d3.select(id)
@@ -777,6 +784,45 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
   var div = d3.select("body").append("div")
   .attr("class", "tooltip")
   .style("opacity", 0);
+
+  createLegend(id,scale);
+  //add legend 
+ // d3.selectAll("g.legendEntry").remove();
+  
+  // var legend = svg.selectAll('g.legendEntry')
+  //   .data(scale.range().reverse())
+  //   .enter()
+  //   .append('g').attr('class', 'legendEntry');
+
+  //   legend
+  //   .append('rect')
+  //   .attr("x", 420)
+  //   .attr("y", function(d, i) {
+  //     return i*15+30;
+  //   })
+  //   .attr("width", 10)
+  //   .attr("height", 15)
+  //   .style("fill", function(d){return d;});
+
+  //   legend.append('text')
+  //   .attr("x", 440)
+  //   .attr("y", function(d, i) {
+  //     return i * 15+30;
+  //   })
+  //   .attr("dy", "0.8em")
+  //   .text(function(d,i) {
+  //     var extent = scale.invertExtent(d);
+  //     var format = d3.format("d");
+  //     return format(+extent[0]) + " - " + format(+extent[1]);
+  //   });
+
+  //titles
+  var text = (variable == "PoliceOfficer") ? "Police Officer Deaths " + year : "Civilian Deaths " + year;
+
+  svg.select("#title")
+      .text(text)
+      .transition()
+      .duration(200);
 
   projection.fitExtent([[0,0], [svg.attr("width") - 130, svg.attr("height")]], states);
   pathGenerator = d3.geoPath().projection(projection);
@@ -808,41 +854,60 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
     return pathGenerator(state);
   })
   .on("click", function (state){
-
-  var currentState = d3.select(this);
+  currentState = d3.select(this);
+  currentStateID = state.id;
 
   if (!clicked){
       orgColor = currentState.style("fill");
-
       currentState
       .style("fill","rgb(169, 169, 169)");
-      var currID = state.id;
 
-       stateData.forEach(function(d){
+      var currID = state.id;
+      stateData.forEach(function(d){
          if (currID == d.key)
           abbrev = d.value.abbreviation;
       });
+
        console.log(abbrev);
+
        clicked = true;
+       oldStateID = state.id; 
+       oldState = currentState; 
 
+       //call get info states passing in stateabbrev here
        getCivInfoStates();
-
   }
-  else {  
+  else {  //something has been clicked already
 
-    //select something that is not 
-    //the original state
-    console.log(currentState.style("fill"));
-    if  (currentState.style("fill") == 'rgb(169, 169, 169)'){
+    //check if you are selecting the old state
+    if (oldStateID == currentStateID){
+      console.log("same state");
       currentState.style("fill", orgColor);
       clicked = false;
+
+      //this is when nothing is selected on the map
     } 
     else {
-        console.log("please diselect the curr state");
-    }
+        oldState.style("fill", orgColor);
 
-  }
-  
+        orgColor = currentState.style("fill");
+
+        currentState
+        .style("fill","rgb(169, 169, 169)");
+        var currID = state.id;
+
+        stateData.forEach(function(d){
+           if (currID == d.key)
+            abbrev = d.value.abbreviation;
+        });
+         console.log(abbrev);
+         clicked = true;
+         oldState = currentState; 
+         oldStateID = state.id; 
+
+          //call get info states passing in stateabbrev here
+    }
+  } 
   })
   .on("mouseover", function (state) {
     d3.select(this)
@@ -885,55 +950,11 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
     d3.selectAll("path")
     .attr("stroke", "white")
   });
-
-  //display legend if 2015
-  if (year=="2015"){
-    var legend = svg.selectAll('g.legendEntry')
-    .data(scale.range().reverse())
-    .enter()
-    .append('g').attr('class', 'legendEntry');
-
-    legend
-    .append('rect')
-    .attr("x", 420)
-    .attr("y", function(d, i) {
-      return i*15+30;
-    })
-    .attr("width", 10)
-    .attr("height", 15)
-    .style("fill", function(d){return d;});
-
-    legend.append('text')
-    .attr("x", 440)
-    .attr("y", function(d, i) {
-      return i * 15+30;
-    })
-    .attr("dy", "0.8em")
-    .text(function(d,i) {
-      var extent = scale.invertExtent(d);
-      var format = d3.format("d");
-      return format(+extent[0]) + " - " + format(+extent[1]);
-    });
-
-    svg.append("text")
-    .attr("x", 445)
-    .attr("y", 18)
-    .attr("text-anchor", "middle")
-    .style("font-size", "10px")
-    .text("Legend (Deaths)");
-  }
-
-  //titles
-  var text = (variable == "PoliceOfficer") ? "Police Officer Deaths " + year : "Civilian Deaths " + year;
-
-  svg.select("#title")
-      .text(text)
-      .transition()
-      .duration(200);
 }
 
 //scales the @param variable graph to @param scale in @param year with @param scale
 function scaleTo(map, variable, scale, year){
+  clicked = false;
   var svg = d3.select(map);
 
   var text = (variable == "police") ? "Police Officer Deaths " + year : "Civilian Deaths " + year;
@@ -1023,6 +1044,32 @@ function getCount(vari, year){
   }
 }
 
+var selected = false;
+
+//fix this maybe
+// d3.select("#menu").selectAll("input")
+// .data(buttonArray).enter()
+// .append("input")
+// .attr("type","button")
+// .attr("class","button")
+// .attr("id", function(d){return d;})
+// .attr("value", function (d){return d;} )
+// .on("click", function (d){
+//   if (!selected){
+//     d3.select(this)
+//     .style("background-color","#2A618D")
+//     .style("color","white");
+//     selected = true;
+//   }
+//   else {
+//      d3.select(this)
+//     .style("background-color","#white")
+//     .style("color","2A618D");
+//     selected = false;
+//   }
+// })
+
+
 //jQuery to toggle buttons
 $("#b2015").click(function(){
   if ($(this).hasClass("selected")){
@@ -1093,7 +1140,12 @@ $("#civi").click(function(){
   }
 });
 
-  </script>
+var svgL = d3.select("#lineChart")
+  .append("svg")
+  .attr("width", 500)
+  .attr("height", 400);
+
+</script>
 
 </body>
 </html>
