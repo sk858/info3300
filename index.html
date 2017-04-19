@@ -256,6 +256,219 @@ states = topojson.feature(rawMap, rawMap.objects.states);
 
     showMap("#policeOfficer2016", scaleCiv2015, "PoliceOfficer", policeCount2016, 2016, stateData);
     showMap("#civilian2016", scaleCiv2015, "Civilian", civCount2016, 2016, stateData);
+
+    var svg = d3.select("#armed_svg"),
+      margin = {top: 20, right: 20, bottom: 30, left: 150},
+      width = +svg.attr("width") - margin.left - margin.right,
+      height = +svg.attr("height") - margin.top - margin.bottom;
+
+    var g = svg.append("g")
+       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var tooltip = d3.select("body").append("div").attr("class", "toolTip");
+
+
+    selectByStates = d3.nest()
+    .key(function(d) { return d.state; })
+    .entries(civilian);
+
+
+
+      var count_gun = civilian.filter(function(value){return value.armed==="gun"&&  1/01/15<value.date<12/30/15}).length;
+      var count_unarmed = civilian.filter(function(value){return value.armed==="unarmed"}).length;
+      var count_vehicle = civilian.filter(function(value){return value.armed==="vehicle"}).length;
+      var count_knife = civilian.filter(function(value){return value.armed==="knife"}).length;
+      var count_toy_weapon = civilian.filter(function(value){return value.armed==="toy weapon" }).length;
+      var count_undetermined = civilian.filter(function(value){return value.armed==="undetermined" &&  1/01/15<value.date<12/30/15 }).length;
+      var count_other = civilian.filter(function(value){
+        if(value.armed==="gun" || value.armed==="unarmed" || value.armed==="vehicle" || value.armed ==="knife" || value.armed ==="toy weapon" || value.armed ==="undetermined"){
+          return false;
+        }
+        return true;
+      }).length;
+
+
+      var counts_armed = [{"armed":"Gun","value":count_gun},{"armed":"Knife","value":count_knife}, {"armed":"Unarmed","value":count_unarmed},
+      {"armed":"Vehicle","value":count_vehicle}, {"armed":"Toy Weapon","value":count_toy_weapon}, {"armed":"Undetermined","value":count_undetermined}, {"armed":"Other", "value":count_other}];
+
+      var x_scale = d3.scaleLinear().domain([0, d3.max(counts_armed, function(d) { return d.value; })]).range([0, width]);
+      var y_scale = d3.scaleBand().domain(counts_armed.map(function(d) { return d.armed; })).range([height, 0]).padding(0.1);
+
+      //Creating horizontal bar graph for Armed
+
+      var bars = g.selectAll(".bar")
+        .data(counts_armed)
+        .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", 0)
+        .attr("height", y_scale.bandwidth())
+        .attr("y", function(d) { return y_scale(d.armed); })
+        .attr("width", function(d) { return x_scale(d.value); })
+        .on("mousemove", function(d){
+            tooltip
+              .style("left", d3.event.pageX - 50 + "px")
+              .style("top", d3.event.pageY - 70 + "px")
+              .style("display", "inline-block")
+              .html((d.armed) + "<br>" + (d.value) + " cases");
+        })
+        .on("mouseout", function(d){ tooltip.style("display", "none");});
+
+      g.append("g")
+      .attr("class", "y_axis")
+      .call(d3.axisLeft(y_scale));
+
+      g.append("g")
+        .data(counts_armed)
+        .attr("class", "x_axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x_scale).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
+
+
+    var svg1 = d3.select("#gender_svg"),
+      margin = {top: 20, right: 20, bottom: 30, left: 150},
+      width = +svg.attr("width") - margin.left - margin.right,
+      height = +svg.attr("height") - margin.top - margin.bottom;
+    var g_gender = svg1.append("g")
+       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+      var count_male = civilian.filter(function(value){return value.gender==="M"}).length;
+      var count_female = civilian.filter(function(value){return value.gender==="F"}).length;
+
+      var counts_gender = [{"gender":"Male","value":count_male},{"gender":"Female","value":count_female}];
+      var x_scale_gender = d3.scaleLinear().domain([0, d3.max(counts_gender, function(d) { return d.value; })]).range([0, width]);
+      var y_scale_gender = d3.scaleBand().domain(counts_gender.map(function(d) { return d.gender; })).range([height, 0]).padding(0.1);
+
+      //Creating horizontal bar graph for gender
+
+      var bars_gender = g_gender.selectAll(".bar")
+        .data(counts_gender)
+        .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", 0)
+        .attr("height", y_scale_gender.bandwidth())
+        .attr("y", function(d) { return y_scale_gender(d.gender); })
+        .attr("width", function(d) { return x_scale_gender(d.value); })
+        .on("mousemove", function(d){
+            tooltip
+              .style("left", d3.event.pageX - 50 + "px")
+              .style("top", d3.event.pageY - 70 + "px")
+              .style("display", "inline-block")
+              .html((d.gender) + "<br>" + (d.value) + " cases");
+        })
+        .on("mouseout", function(d){ tooltip.style("display", "none");});
+
+      g_gender.append("g")
+      .attr("class", "y_axis")
+      .call(d3.axisLeft(y_scale_gender));
+
+      g_gender.append("g")
+        .data(counts_gender)
+        .attr("class", "x_axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x_scale_gender).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
+
+
+    var svg2 = d3.select("#race_svg"),
+      margin = {top: 20, right: 20, bottom: 30, left: 150},
+      width = +svg.attr("width") - margin.left - margin.right,
+      height = +svg.attr("height") - margin.top - margin.bottom;
+
+    var g_race = svg2.append("g")
+       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+
+     var count_asian = civilian.filter(function(value){return value.race==="A"}).length;
+     var count_black = civilian.filter(function(value){return value.race==="B"}).length;
+     var count_hispanic = civilian.filter(function(value){return value.race==="H"}).length;
+     var count_native = civilian.filter(function(value){return value.race==="N"}).length;
+     var count_white = civilian.filter(function(value){return value.race==="W" }).length;
+     var count_other_race = civilian.filter(function(value){return value.race==="O"}).length;
+
+     var counts_race = [{"race":"Asian","value":count_asian},{"race":"Black","value":count_black}, {"race":"Hispanic","value":count_hispanic},
+     {"race":"Native American","value":count_native}, {"race":"White","value":count_white}, {"race":"Other","value":count_other_race}];
+
+     var x_scale_race = d3.scaleLinear().domain([0, d3.max(counts_race, function(d) { return d.value; })]).range([0, width]);
+     var y_scale_race = d3.scaleBand().domain(counts_race.map(function(d) { return d.race; })).range([height, 0]).padding(0.1);
+
+     //Creating horizontal bar graph for race
+
+     var bars_race = g_race.selectAll(".bar")
+       .data(counts_race)
+       .enter().append("rect")
+       .attr("class", "bar")
+       .attr("x", 0)
+       .attr("height", y_scale_race.bandwidth())
+       .attr("y", function(d) { return y_scale_race(d.race); })
+       .attr("width", function(d) { return x_scale_race(d.value); })
+       .on("mousemove", function(d){
+           tooltip
+             .style("left", d3.event.pageX - 50 + "px")
+             .style("top", d3.event.pageY - 70 + "px")
+             .style("display", "inline-block")
+             .html((d.race) + "<br>" + (d.value) + " cases");
+       })
+        .on("mouseout", function(d){ tooltip.style("display", "none");});
+
+     g_race.append("g")
+     .attr("class", "y_axis")
+     .call(d3.axisLeft(y_scale_race));
+
+     g_race.append("g")
+       .data(counts_race)
+       .attr("class", "x_axis")
+        .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x_scale_race).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
+
+
+    var svg3 = d3.select("#police_svg"),
+      margin = {top: 20, right: 20, bottom: 30, left: 150},
+      width = +svg.attr("width") - margin.left - margin.right,
+      height = +svg.attr("height") - margin.top - margin.bottom;
+
+    var g_cause = svg3.append("g")
+       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+     var counts_cause = d3.nest()
+      .key(function(d) { return d.cause_short; })
+      .rollup(function(v) { return v.length; })
+      .entries(police);
+
+      console.log(counts_cause);
+
+     var x_scale_cause = d3.scaleLinear().domain([0, d3.max(counts_cause, function(d) { return d.value; })]).range([0, width]);
+     var y_scale_cause = d3.scaleBand().domain(counts_cause.map(function(d) { return d.key; })).range([height, 0]).padding(0.1);
+
+     //Creating horizontal bar graph for Police deaths
+
+     var bars_cause = g_cause.selectAll(".bar")
+       .data(counts_cause)
+       .enter().append("rect")
+       .attr("class", "bar")
+       .attr("x", 0)
+       .attr("height", y_scale_cause.bandwidth())
+       .attr("y", function(d) { return y_scale_cause(d.key); })
+       .attr("width", function(d) { return x_scale_cause(d.value); })
+       .on("mousemove", function(d){
+           tooltip
+             .style("left", d3.event.pageX - 50 + "px")
+             .style("top", d3.event.pageY - 70 + "px")
+             .style("display", "inline-block")
+             .html((d.key) + "<br>" + (d.value) + " cases");
+       })
+        .on("mouseout", function(d){ tooltip.style("display", "none");});
+
+     g_cause.append("g")
+     .attr("class", "y_axis")
+     .call(d3.axisLeft(y_scale_cause));
+
+     g_cause.append("g")
+       .data(counts_cause)
+       .attr("class", "x_axis")
+       .attr("transform", "translate(0," + height + ")")
+       .call(d3.axisBottom(x_scale_cause).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
   });
 
 
@@ -324,7 +537,7 @@ for (var i=0;i<cdeath2015.length;i++){
     }
     policedeaths.push(d2)
   });
-   
+
 
 var man2 = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="blue"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
 
@@ -427,7 +640,7 @@ for (var i=0;i<cdeath2016.length;i++){
     }
     policedeaths.push(d2)
   });
-   
+
 
 var man2 = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="blue"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
 
@@ -456,215 +669,7 @@ for (var i=0;i<pdeath2016.length;i++){
 
 
 
-    var svg = d3.select("#armed_svg"),
-      margin = {top: 20, right: 20, bottom: 30, left: 150},
-      width = +svg.attr("width") - margin.left - margin.right,
-      height = +svg.attr("height") - margin.top - margin.bottom;
 
-    var g = svg.append("g")
-   		 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    var tooltip = d3.select("body").append("div").attr("class", "toolTip");
-
-
-    selectByStates = d3.nest()
-    .key(function(d) { return d.state; })
-    .entries(civilian);
-
-
-      var count_gun = civilian.filter(function(value){return value.armed==="gun"&&  1/01/15<value.date<12/30/15}).length;
-      var count_unarmed = civilian.filter(function(value){return value.armed==="unarmed"}).length;
-      var count_vehicle = civilian.filter(function(value){return value.armed==="vehicle"}).length;
-      var count_knife = civilian.filter(function(value){return value.armed==="knife"}).length;
-      var count_toy_weapon = civilian.filter(function(value){return value.armed==="toy weapon" }).length;
-      var count_undetermined = civilian.filter(function(value){return value.armed==="undetermined" &&  1/01/15<value.date<12/30/15 }).length;
-      var count_other = civilian.filter(function(value){
-        if(value.armed==="gun" || value.armed==="unarmed" || value.armed==="vehicle" || value.armed ==="knife" || value.armed ==="toy weapon" || value.armed ==="undetermined"){
-          return false;
-        }
-        return true;
-      }).length;
-
-
-      var counts_armed = [{"armed":"Gun","value":count_gun},{"armed":"Knife","value":count_knife}, {"armed":"Unarmed","value":count_unarmed},
-      {"armed":"Vehicle","value":count_vehicle}, {"armed":"Toy Weapon","value":count_toy_weapon}, {"armed":"Undetermined","value":count_undetermined}, {"armed":"Other", "value":count_other}];
-
-      var x_scale = d3.scaleLinear().domain([0, d3.max(counts_armed, function(d) { return d.value; })]).range([0, width]);
-      var y_scale = d3.scaleBand().domain(counts_armed.map(function(d) { return d.armed; })).range([height, 0]).padding(0.1);
-
-      //Creating horizontal bar graph for Armed
-
-      var bars = g.selectAll(".bar")
-        .data(counts_armed)
-        .enter().append("rect")
-        .attr("class", "bar")
-        .attr("x", 0)
-        .attr("height", y_scale.bandwidth())
-        .attr("y", function(d) { return y_scale(d.armed); })
-        .attr("width", function(d) { return x_scale(d.value); })
-        .on("mousemove", function(d){
-            tooltip
-              .style("left", d3.event.pageX - 50 + "px")
-              .style("top", d3.event.pageY - 70 + "px")
-              .style("display", "inline-block")
-              .html((d.armed) + "<br>" + (d.value) + " cases");
-        })
-    		.on("mouseout", function(d){ tooltip.style("display", "none");});
-
-      g.append("g")
-      .attr("class", "y_axis")
-      .call(d3.axisLeft(y_scale));
-
-      g.append("g")
-        .data(counts_armed)
-        .attr("class", "x_axis")
-       	.attr("transform", "translate(0," + height + ")")
-      	.call(d3.axisBottom(x_scale).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
-
-
-    var svg1 = d3.select("#gender_svg"),
-      margin = {top: 20, right: 20, bottom: 30, left: 150},
-      width = +svg.attr("width") - margin.left - margin.right,
-      height = +svg.attr("height") - margin.top - margin.bottom;
-    var g_gender = svg1.append("g")
-       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
-      var count_male = civilian.filter(function(value){return value.gender==="M"}).length;
-      var count_female = civilian.filter(function(value){return value.gender==="F"}).length;
-
-      var counts_gender = [{"gender":"Male","value":count_male},{"gender":"Female","value":count_female}];
-      var x_scale_gender = d3.scaleLinear().domain([0, d3.max(counts_gender, function(d) { return d.value; })]).range([0, width]);
-      var y_scale_gender = d3.scaleBand().domain(counts_gender.map(function(d) { return d.gender; })).range([height, 0]).padding(0.1);
-
-      //Creating horizontal bar graph for gender
-
-      var bars_gender = g_gender.selectAll(".bar")
-        .data(counts_gender)
-        .enter().append("rect")
-        .attr("class", "bar")
-        .attr("x", 0)
-        .attr("height", y_scale_gender.bandwidth())
-        .attr("y", function(d) { return y_scale_gender(d.gender); })
-        .attr("width", function(d) { return x_scale_gender(d.value); })
-        .on("mousemove", function(d){
-            tooltip
-              .style("left", d3.event.pageX - 50 + "px")
-              .style("top", d3.event.pageY - 70 + "px")
-              .style("display", "inline-block")
-              .html((d.gender) + "<br>" + (d.value) + " cases");
-        })
-        .on("mouseout", function(d){ tooltip.style("display", "none");});
-
-      g_gender.append("g")
-      .attr("class", "y_axis")
-      .call(d3.axisLeft(y_scale_gender));
-
-      g_gender.append("g")
-        .data(counts_gender)
-        .attr("class", "x_axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x_scale_gender).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
-
-
-    var svg2 = d3.select("#race_svg"),
-      margin = {top: 20, right: 20, bottom: 30, left: 150},
-      width = +svg.attr("width") - margin.left - margin.right,
-      height = +svg.attr("height") - margin.top - margin.bottom;
-
-    var g_race = svg2.append("g")
-       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
-
-     var count_asian = civilian.filter(function(value){return value.race==="A"}).length;
-     var count_black = civilian.filter(function(value){return value.race==="B"}).length;
-     var count_hispanic = civilian.filter(function(value){return value.race==="H"}).length;
-     var count_native = civilian.filter(function(value){return value.race==="N"}).length;
-     var count_white = civilian.filter(function(value){return value.race==="W" }).length;
-     var count_other_race = civilian.filter(function(value){return value.race==="O"}).length;
-
-     var counts_race = [{"race":"Asian","value":count_asian},{"race":"Black","value":count_black}, {"race":"Hispanic","value":count_hispanic},
-     {"race":"Native American","value":count_native}, {"race":"White","value":count_white}, {"race":"Other","value":count_other_race}];
-
-     var x_scale_race = d3.scaleLinear().domain([0, d3.max(counts_race, function(d) { return d.value; })]).range([0, width]);
-     var y_scale_race = d3.scaleBand().domain(counts_race.map(function(d) { return d.race; })).range([height, 0]).padding(0.1);
-
-     //Creating horizontal bar graph for race
-
-     var bars_race = g_race.selectAll(".bar")
-       .data(counts_race)
-       .enter().append("rect")
-       .attr("class", "bar")
-       .attr("x", 0)
-       .attr("height", y_scale_race.bandwidth())
-       .attr("y", function(d) { return y_scale_race(d.race); })
-       .attr("width", function(d) { return x_scale_race(d.value); })
-       .on("mousemove", function(d){
-           tooltip
-             .style("left", d3.event.pageX - 50 + "px")
-             .style("top", d3.event.pageY - 70 + "px")
-             .style("display", "inline-block")
-             .html((d.race) + "<br>" + (d.value) + " cases");
-       })
-    		.on("mouseout", function(d){ tooltip.style("display", "none");});
-
-     g_race.append("g")
-     .attr("class", "y_axis")
-     .call(d3.axisLeft(y_scale_race));
-
-     g_race.append("g")
-       .data(counts_race)
-       .attr("class", "x_axis")
-      	.attr("transform", "translate(0," + height + ")")
-     	.call(d3.axisBottom(x_scale_race).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
-
-
-    var svg3 = d3.select("#police_svg"),
-      margin = {top: 20, right: 20, bottom: 30, left: 150},
-      width = +svg.attr("width") - margin.left - margin.right,
-      height = +svg.attr("height") - margin.top - margin.bottom;
-
-    var g_cause = svg3.append("g")
-       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
-     var counts_cause = d3.nest()
-      .key(function(d) { return d.cause_short; })
-      .rollup(function(v) { return v.length; })
-      .entries(police);
-
-     var x_scale_cause = d3.scaleLinear().domain([0, d3.max(counts_cause, function(d) { return d.value; })]).range([0, width]);
-     var y_scale_cause = d3.scaleBand().domain(counts_cause.map(function(d) { return d.key; })).range([height, 0]).padding(0.1);
-
-     //Creating horizontal bar graph for Police deaths
-
-     var bars_cause = g_cause.selectAll(".bar")
-       .data(counts_cause)
-       .enter().append("rect")
-       .attr("class", "bar")
-       .attr("x", 0)
-       .attr("height", y_scale_cause.bandwidth())
-       .attr("y", function(d) { return y_scale_cause(d.key); })
-       .attr("width", function(d) { return x_scale_cause(d.value); })
-       .on("mousemove", function(d){
-           tooltip
-             .style("left", d3.event.pageX - 50 + "px")
-             .style("top", d3.event.pageY - 70 + "px")
-             .style("display", "inline-block")
-             .html((d.key) + "<br>" + (d.value) + " cases");
-       })
-    		.on("mouseout", function(d){ tooltip.style("display", "none");});
-
-     g_cause.append("g")
-     .attr("class", "y_axis")
-     .call(d3.axisLeft(y_scale_cause));
-
-     g_cause.append("g")
-       .data(counts_cause)
-       .attr("class", "x_axis")
-       .attr("transform", "translate(0," + height + ")")
-     	 .call(d3.axisBottom(x_scale_cause).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
 
 
 
@@ -688,10 +693,10 @@ var stateData;
   '#214B6E', '#1C415E', '#17364F', '#132B3F','#050B10'];
 
 
-    
 
 
-  
+
+
 
 
 
@@ -755,11 +760,11 @@ var pathGenerator = d3.geoPath().projection(projection);
 var states;
 
 function getCivInfoStates(){
+  console.log(selectByStates);
   var chosenState = selectByStates.filter(function(value){return value.key=== abbrev });
-  console.log(chosenState);
-  var getArmed = d3.nest()
-  .key(function(d) { return d.armed; })
-  .entries(chosenState);
+  console.log(chosenState[0].values);
+
+
 }
 
 
