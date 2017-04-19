@@ -55,6 +55,11 @@
   color: white;
 }
 
+.selected{
+  background-color: #2A618D;
+  color: white;
+}
+
   .bar {
 	fill: steelblue;
   }
@@ -95,7 +100,7 @@
   }
 
   #civ{
-    background-color: #f44336;
+    background-color: #ffffff;
     float:left;
     font-size: 20px;
   }
@@ -126,31 +131,17 @@
 </style>
 </head>
 <body>
-<<<<<<< HEAD
 <div id="menu">
-<input id="b2015" class="button" type="button" value="2015" />
-<input id="b2016" class="button selected" type="button" value="2016" /><br>
+<input id="b2015" class="button selected" type="button" value="2015" />
+<input id="b2016" class="button" type="button" value="2016" /><br>
 <input id="po" class="button selected" type="button" value="Police Officer" />
-<input id="civ" class="button" type="button" value="Civilian" />
+<input id="civi" class="button" type="button" value="Civilian" />
 </div>
 
+<p class="block" id="map"></p>
+
 <script>
-// $("#b2015").click(function(){
-//   if ($(this).hasClass("selected")){
-//     $("#b2016").removeClass("selected");
-//   }
-//   else{
-//     $(this).addClass("selected");
-//   }
-// });
 
-// $("#b2016").click(function(){
-//   if ($(this).hasClass("selected")){
-
-//   }
-//   else{
-//   }
-// });
 
 </script>
 
@@ -211,8 +202,29 @@
 <svg id=police_svg width="960" height="500"></svg>
 
 <script id="notes">
+<<<<<<< Updated upstream
 var selectByStates;
 var abbrev;
+=======
+var stateData;
+  var stateCountData = []; // state to count of police deaths and civ deaths
+
+  var scaleCiv2015; //scale for civilian deaths
+  var scalePolice2015; //scale for police deaths
+
+  var policeCount2015;
+  var civCount2015;
+  var policeCount2016;
+  var policeCount2016;
+
+  //color range
+  var range1 = ['#E0ECF6','#D0E2F1', '#C0D8EC','#B0CFE8','#A1C5E3', '#89B6DC', '#81B2D9', '#72A8D5',
+  '#629FD0', '#5295CB', '#438BC7', '#3881BC', '#3476AD', '#2F6C9D', '#2A618D', '#26567E', '#214B6E',
+  '#1C415E', '#17364F', '#132B3F', '#0E202F','#09161F', '#050B10'];
+
+  var range = ['#E0ECF6','#B0CFE8','#A1C5E3', '#72A8D5', '#629FD0', '#5295CB', '#3476AD', '#2F6C9D',
+  '#214B6E', '#1C415E', '#17364F', '#132B3F','#050B10'];
+>>>>>>> Stashed changes
 
 d3.queue()
 .defer(d3.json, "us.json")
@@ -575,24 +587,7 @@ document.getElementById('demo2').innerHTML = manString2;
 
 
 
-var stateData;
-  var stateCountData = []; // state to count of police deaths and civ deaths
 
-  var scaleCiv2015; //scale for civilian deaths
-  var scalePolice2015; //scale for police deaths
-
-  var policeCount2015;
-  var civCount2015;
-  var policeCount2016;
-  var policeCount2016;
-
-  //color range
-  var range1 = ['#E0ECF6','#D0E2F1', '#C0D8EC','#B0CFE8','#A1C5E3', '#89B6DC', '#81B2D9', '#72A8D5',
-  '#629FD0', '#5295CB', '#438BC7', '#3881BC', '#3476AD', '#2F6C9D', '#2A618D', '#26567E', '#214B6E',
-  '#1C415E', '#17364F', '#132B3F', '#0E202F','#09161F', '#050B10'];
-
-  var range = ['#E0ECF6','#B0CFE8','#A1C5E3', '#72A8D5', '#629FD0', '#5295CB', '#3476AD', '#2F6C9D',
-  '#214B6E', '#1C415E', '#17364F', '#132B3F','#050B10'];
 
 
     states = topojson.feature(rawMap, rawMap.objects.states);
@@ -617,7 +612,10 @@ var stateData;
     scalePolice2015 = d3.scaleQuantize().domain([0,maxPolice2015]).range(range);
     scaleCiv2015 = d3.scaleQuantize().domain([0,maxCiv2015]).range(range1);
 
+    showMap("#map", scalePolice2015, "PoliceOfficer", policeCount2015, 2015,stateData);
+
     showMap("#policeOfficer2015", scaleCiv2015, "PoliceOfficer", policeCount2015, 2015,stateData);
+
     showMap("#civilian2015", scaleCiv2015, "Civilian", civCount2015, 2015,stateData);
 
     //get police and civ data for 2016
@@ -861,11 +859,13 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
 }
 
 //scales the police officer graph to @param scale in @param year
-function scaleTo(scale, year){
-  var id = "#policeOfficer"+year;
-  var svg = d3.select(id).transition();
+function scaleTo(map, scale, year){
+  //var id = "#policeOfficer"+year;
+  var svg = d3.select(map).transition();
+  console.log(scale);
+  var vari = String(scale).substring(5,6) == "P" ? "police" : "civ";
 
-  var count = getCount(year);
+  var count = getCount(vari,year);
 
   svg.selectAll("path")
   .style("fill", function (state) {
@@ -880,30 +880,95 @@ function scaleTo(scale, year){
 }
 
 //return states + death counts for @param year
-function getCount(year){
-  if (year == 2015)
-    return policeCount2015;
-  else
-    return policeCount2016;
+function getCount(vari, year){
+  if (year == 2015){
+    if (vari == "police") 
+        return policeCount2015;
+    else 
+      return civCount2015;
+  }
+  else{
+    if (vari == "police")
+      return policeCount2016;
+    else 
+      return civCount2016;
+  }
 }
 
-var police = true;
-$('#scaleCiv').click(function(){
-  if(police){
-    $(this).val("Scale Civilian");
+//jQuery to toggle buttons
+$("#b2015").click(function(){
+  if ($(this).hasClass("selected")){
+    $("#b2016").removeClass("selected");
 
-    police = false;
-    scaleTo(scalePolice2015, 2015)
-    scaleTo(scalePolice2015, 2016);
+    //change display
+    if ($("#po").hasClass("selected")){
+        scaleTo("#map",scalePolice2015, 2015);
+    }
+    else if ($("#civi").hasClass("selected")){
+      scaleTo("#map",scaleCiv2015, 2015);
+    }
+  }
+  else{
+    $(this).addClass("selected");
+    $("#b2016").removeClass("selected");
+  }
 
-  } else {
-    console.log($(this));
-    $(this).val("Scale Police Officer");
+  //populate the map
+  if ($("#po").hasClass("selected")){
+      scaleTo("#map",scalePolice2015, 2015);
+  }
+  else if ($("#civi").hasClass("selected")){
+    scaleTo("#map",scaleCiv2015, 2015);
+  }
+});
+$("#b2016").click(function(){
+if ($(this).hasClass("selected")){
+    $("#b2015").removeClass("selected");
+  }
+  else{
+    console.log(scalePolice2015);
+    $(this).addClass("selected");
+    $("#b2015").removeClass("selected");
+  }
 
-    police = true;
-    scaleTo(scaleCiv2015, 2015)
-    scaleTo(scaleCiv2015, 2016);
-
+  //populate the map
+  if ($("#po").hasClass("selected")){
+      scaleTo("#map",scalePolice2015, 2015);
+  }
+  else if ($("#civi").hasClass("selected")){
+    scaleTo("#map",scaleCiv2015, 2015);
+  }
+});
+$("#po").click(function(){
+  if ($(this).hasClass("selected")){
+    $("#civi").removeClass("selected");
+  }
+  else{
+    $(this).addClass("selected");
+    $("#civi").removeClass("selected");
+  }
+  //populate the map
+  if ($("#b2015").hasClass("selected")){
+    scaleTo("#map",scalePolice2015, 2015);
+  }
+  else if ($("#b2016").hasClass("selected")){
+    scaleTo("#map",scalePolice2015, 2016);
+  }
+});
+$("#civi").click(function(){
+  if ($(this).hasClass("selected")){
+    $("#po").removeClass("selected");
+  }
+  else{
+    $(this).addClass("selected");
+    $("#po").removeClass("selected");
+  }
+  //populate the map
+  if ($("#b2015").hasClass("selected")){
+    scaleTo("#map",scaleCiv2015, 2015);
+  }
+  else if ($("#b2016").hasClass("selected")){
+    scaleTo("#map",scaleCiv2015, 2016);
   }
 });
 
