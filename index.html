@@ -282,6 +282,10 @@ states = topojson.feature(rawMap, rawMap.objects.states);
     .key(function(d) { return d.state; })
     .entries(civilian);
 
+    selectByStatespol = d3.nest()
+    .key(function(d) { return d.state; })
+    .entries(police);
+
 
 
       var count_gun = civilian.filter(function(value){return value.armed==="gun"&&  1/01/15<value.date<12/30/15}).length;
@@ -488,8 +492,6 @@ var finalarray16=[];
 
 
 
-
-
 function datafinder15(civilian,police){
 
 var civdeaths=[];
@@ -502,7 +504,6 @@ var pdeath2016=[];
 
 var manString = "";
 var manString2 = "";
-
 
 
 
@@ -593,6 +594,7 @@ function clear(){
 }
 
 
+
 function datafinder16(civilian,police){
 
 var civdeaths=[];
@@ -613,6 +615,7 @@ var finalarray=[];
 
   civilian.forEach(function(d) {
     civdeaths.push(d);
+
 
     if (d.date.slice(-2).includes("15")){
       cdeath2015.push(d);
@@ -674,12 +677,48 @@ for (var i=0;i<pdeath2016.length;i++){
 }
 
 
+function civpolcount(abbreviation){
+  manstring=[];
+  civdeaths=[];
+  poldeaths=[];
+  manString="";
+  manString2="";
 
+  console.log(abbreviation);
+  // var selectedstates=helpercivpol();
+  selectByStates.forEach(function(element){
+    if (element.key==abbreviation){
+      console.log(element.values.length);
+      var man = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="red"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
+      for (var i=0;i<element.values.length;i++){
+        manString += '<svg id="man' +i + '"';
+        if(i>element.values.length){manString+="style='opacity:0;'";}
+        manString += man;
+        if(i%15 == 14){manString+="</br>";}
+      }
+        document.getElementById('demop').innerHTML = "Number of Civilians in "+element.key+" Dead: "+ element.values.length.toString();
+        document.getElementById('demo').innerHTML = manString;
+    }
 
+  })
+  selectByStatespol.forEach(function(element2){
+    if (element2.key==abbreviation){
+      console.log(element2.values.length);
+      var man2 = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="blue"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
+      for (var i=0;i<element2.values.length;i++){
+        manString2 += '<svg id="man' +i + '"';
+        if(i>element2.values.length){manString2+="style='opacity:0;'";}
+        manString2 += man2;
+        if(i%15 == 14){manString2+="</br>";}
+      }
 
+      document.getElementById('demo2p').innerHTML = "Number of Police in "+element2.key+" Dead: "+ element2.values.length.toString();
+      document.getElementById('demo2').innerHTML = manString2;
 
+    }
+  })
 
-
+}
 
 
 
@@ -745,7 +784,7 @@ function getMaxCiv(civCount){
     return obj.civ;
   });
 }
-
+var stated=[];
 
 var projection = d3.geoAlbersUsa().scale(75);
 var pathGenerator = d3.geoPath().projection(projection);
@@ -755,7 +794,11 @@ function getCivInfoStates(){
   console.log(selectByStates);
   var chosenState = selectByStates.filter(function(value){return value.key=== abbrev });
   console.log(chosenState[0].values);
+
 }
+
+  stated.push(chosenState[0].values);
+
 
 function createLegend(id, scale){
 
@@ -767,6 +810,8 @@ function createLegend(id, scale){
   var currentStateID;
   var clicked = false;
   var orgColor;
+
+
 
 //displays the map, fills in according to scale, adds legend and labels
 function showMap(id, scale, variable, stateCount, year, stateData) {
@@ -870,6 +915,7 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
 
        console.log(abbrev);
 
+
        clicked = true;
        oldStateID = state.id; 
        oldState = currentState; 
@@ -908,6 +954,14 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
           //call get info states passing in stateabbrev here
     }
   } 
+
+     stateData.forEach(function(d){
+       if (currID == d.key)
+        abbrev = d.value.abbreviation;
+    });
+     console.log(abbrev);
+     civpolcount(abbrev);
+
   })
   .on("mouseover", function (state) {
     d3.select(this)
