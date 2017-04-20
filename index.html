@@ -38,18 +38,20 @@
     pointer-events: none;
   }
 
-  .button {
+.button {
     background-color: white;
     border: 1px solid #2A618D;
     color: #2A618D;
-    width:150px;
-    padding: 10px 25px;
-    margin:10px;
+    width:130px;
+    padding: 10px 20px;
+    margin:5px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
+    font-size: 14px;
+    border-radius:5%;
     font-family: 'Source Sans Pro',sans-serif;
+    box-shadow: 2px 2px 2px #d3d3d3;
 }
 
 .button:hover{
@@ -133,6 +135,7 @@
 </style>
 </head>
 <body>
+  <h2 id="title">Police Officer Deaths vs. Civilian Deaths</h2>
 <p id="menu">
 <input id="b2015" onclick="button2015()" class="button selected" type="button" value="2015" />
 <input id="b2016" onclick="button2016()" class="button" type="button" value="2016" /><br>
@@ -142,21 +145,7 @@
 
 <p class="block" id="map"></p>
 
-<h2>Civilian Deaths</h2>
 
-<div class="mid">
-  <p class="block" id="civilian2015"></p>
-  <p class="block" id="civilian2016"></p>
-</div>
-<br><br><br>
-
-<h2>Police Officer Deaths</h2>
-<div class="mid">
-  <p class="block" id="policeOfficer2015"></p>
-  <p class="block" id="policeOfficer2016"></p>
-</div>
-
-  <h2 id="title">Police Officer Deaths vs. Civilian Deaths</h2>
 <div id="lotsOfLittleMen">
 
 <br/><br/>
@@ -223,9 +212,6 @@ var stateData;
 
   var rangeCiv = ['#C4E8CD','#B6E2C1' ,'#A7DDB4','#89D19B', '#7BCC8F', '#6CC683','#5DC076', '#4FBA6A', '#3FA258', '#338448', '#286738', '#225830', '#1D4928','#173B20', '#112C18'];
 
-
-
-
 d3.queue()
 .defer(d3.json, "us.json")
 .defer(d3.json, "stateNames.json")
@@ -260,16 +246,11 @@ states = topojson.feature(rawMap, rawMap.objects.states);
 
     showMap("#map", scalePolice2015, "PoliceOfficer", policeCount2015, 2015,stateData);
 
-    showMap("#policeOfficer2015", scalePolice2015, "PoliceOfficer", policeCount2015, 2015,stateData);
-
-    showMap("#civilian2015", scaleCiv2015, "Civilian", civCount2015, 2015,stateData);
 
     //get police and civ data for 2016
     policeCount2016 = getPolice(2016, police, stateCountData);
     civCount2016 = getCiv(16, civilian, stateCountData);
 
-    showMap("#policeOfficer2016", scalePolice2015, "PoliceOfficer", policeCount2016, 2016, stateData);
-    showMap("#civilian2016", scaleCiv2015, "Civilian", civCount2016, 2016, stateData);
 
     selectByStates = d3.nest()
     .key(function(d) { return d.state; })
@@ -278,7 +259,6 @@ states = topojson.feature(rawMap, rawMap.objects.states);
     selectByStatespol = d3.nest()
     .key(function(d) { return d.state; })
     .entries(police);
-
 
   });
 
@@ -947,7 +927,8 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
 
   if (!clicked){
       orgColor = currentState.style("fill");
-      currentState
+      currentState.transition()
+    .duration(200)
       .style("fill","rgb(169, 169, 169)");
 
       var currID = state.id;
@@ -973,7 +954,8 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
     //check if you are selecting the old state
     if (oldStateID == currentStateID){
       console.log("same state");
-      currentState.style("fill", orgColor);
+      currentState.transition()
+    .duration(200).style("fill", orgColor);
       clicked = false;
 
       //this is when nothing is selected on the map
@@ -984,7 +966,8 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
         orgColor = currentState.style("fill");
 
         currentState
-        .style("fill","rgb(169, 169, 169)");
+        .transition()
+    .duration(200).style("fill","rgb(169, 169, 169)");
         var currID = state.id;
 
         stateData.forEach(function(d){
@@ -996,7 +979,7 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
 
 
         });
-         console.log(stateAbbrev);
+         //console.log(stateAbbrev);
          clicked = true;
          oldState = currentState;
          oldStateID = state.id;
@@ -1004,16 +987,8 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
           //call get info states passing in stateabbrev here
           drawCivGraph();
     }
-
-
   }
-
-     
-     
-
   })
-
-
 
   .on("mouseover", function (state) {
     d3.select(this)
