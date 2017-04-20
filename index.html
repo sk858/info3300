@@ -662,9 +662,9 @@ g_race.append("g")
 
  function getCivInfoStates(){
 
-  console.log(stateAbbrev);
+  // console.log(stateAbbrev);
   var chosenState = selectByStates.filter(function(value){return value.key=== stateAbbrev });
-  console.log(chosenState);
+  // console.log(chosenState);
   var stateArray = chosenState[0].values;
 
   return stateArray;
@@ -685,11 +685,11 @@ g_race.append("g")
       }
       return true;
     }).length;
-    console.log(count_other);
+    //console.log(count_other);
 
     var counts_armed = [{"armed":"Gun","value":count_gun},{"armed":"Knife","value":count_knife}, {"armed":"Unarmed","value":count_unarmed},
     {"armed":"Vehicle","value":count_vehicle}, {"armed":"Toy Weapon","value":count_toy_weapon}, {"armed":"Undetermined","value":count_undetermined}, {"armed":"Other", "value":count_other}];
-    console.log(counts_armed);
+    //console.log(counts_armed);
 
 
     x_scale.domain([0, d3.max(counts_armed, function(d) { return d.value; })]);
@@ -943,6 +943,7 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
   .on("click", function (state){
   currentState = d3.select(this);
   currentStateID = state.id;
+ 
 
   if (!clicked){
       orgColor = currentState.style("fill");
@@ -955,7 +956,7 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
 
             stateAbbrev = d.value.abbreviation;
       });
-
+       civpolcount(stateAbbrev);
 
 
 
