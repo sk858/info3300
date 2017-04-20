@@ -171,6 +171,7 @@
 <p id="demo2p">Number of Police Dead:</p>
 <div id="demo"></div>
 <div id="demo2"></div>
+</div>
 
 <br>
 <h1>Armed Stats</h1>
@@ -587,7 +588,7 @@ var svg = d3.select("#armed_svg"),
   height = +svg.attr("height") - margin.top - margin.bottom;
 var g = svg.append("g")
      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-var tooltip = d3.select("body").append("div").attr("class", "toolTip");
+var tooltip = d3.select("body").append("div").attr("class", "tooltip");
 var x_scale = d3.scaleLinear().range([0, width]);
 var y_scale = d3.scaleBand().range([height, 0]).padding(0.1);
 
