@@ -125,7 +125,7 @@
 </style>
 </head>
 <body>
-  <h2 id="title">Police Officer Deaths vs. Civilian Deaths</h2>
+<h2 id="title">Police Officer Deaths vs. Civilian Deaths</h2>
 <p id="menu">
 <input id="b2015" onclick="button2015()" class="button selected" type="button" value="2015" />
 <input id="b2016" onclick="button2016()" class="button" type="button" value="2016" /><br>
@@ -133,7 +133,9 @@
 <input id="civi" class="button" type="button" value="Civilian" />
 </p>
 
-<p class="block" id="map"></p>
+<div class="row">
+  <div class="col-sm-3"><p class="block" id="map"></p></div>
+</div>
 
 <h2>Civilian Deaths</h2>    
    <p class="block" id="civilian2015"></p>   
@@ -182,6 +184,7 @@
 <h1>Police Officer Death</h1>
 <svg id=police_svg width="960" height="500"></svg>
 
+<p id="lineChart"></p>
 
 <script id="notes">
 var selectByStates;
@@ -836,6 +839,7 @@ var orgColor;
 function showMap(id, scale, variable, stateCount, year, stateData) {
   var svg = d3.select(id)
   .append("svg")
+  .attr("id","mapSvg")
   .attr("width", 500)
   .attr("height", 400);
 
@@ -1012,21 +1016,21 @@ function scaleTo(map, variable, scale, year){
 
   var text = (variable == "police") ? "Police Officer Deaths " + year : "Civilian Deaths " + year;
 
-var svg = d3.select(map);
+  var svg = d3.select("#mapSvg");
 
- svg.select(".legendQuant").remove();
+ svg.selectAll(".legendQuant").remove();
 
-//  svg.append("g")
-//   .attr("class", "legendQuant")
-//   .attr("transform", "translate(420,30)");
+ svg.append("g")
+  .attr("class", "legendQuant")
+  .attr("transform", "translate(420,30)");
 
-// var legend = d3.legendColor()
-//   .labelFormat(d3.format("d"))
-//   .useClass(true)
-//   .titleWidth(100)
-//   .scale(scale);
+var legend = d3.legendColor()
+  .labelFormat(d3.format("d"))
+  .useClass(false)
+  .titleWidth(100)
+  .scale(scale);
 
-// svg.select(".legendQuant").call(legend);
+svg.select(".legendQuant").call(legend);
 
   svg.select("#title")
       .text(text)
