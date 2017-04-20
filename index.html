@@ -18,7 +18,6 @@
 <!-- Latest compiled JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-
   <style>
   :focus {
   outline: 0;
@@ -54,6 +53,17 @@
     pointer-events: none;
   }
 
+.toolTip {
+  position: absolute;
+  display: none;
+  min-width: 90px;
+  height: auto;
+  background: #939393;
+  color:white;
+  padding: 14px;
+  text-align: center;
+  }
+
   .button {
     background-color: white;
     border: 1px solid #2A618D;
@@ -79,11 +89,18 @@
 }
 
   .bar {
-  fill: steelblue;
+  fill:#7BCC8F;
   }
   .bar:hover {
-    fill: orange;
+    fill-opacity:0.7;
   }
+  .barP {
+  fill: #629FD0;
+  }
+  .barP:hover {
+    fill-opacity:0.7;
+  }
+
   .axis {
     font: 10px sans-serif;
   }
@@ -106,16 +123,7 @@
   .x_axis path {
   display: none;
   }
-  .toolTip {
-  position: absolute;
-  display: none;
-  min-width: 80px;
-  height: auto;
-  background: none repeat scroll 0 0 #ffffff;
-  border: 1px solid #6F257F;
-  padding: 14px;
-  text-align: center;
-  }
+
 
   #civ{
     background-color: #ffffff;
@@ -170,15 +178,6 @@
 <div id="demo2"></div> -->
 
 <div class="row">
-  <div class="col-md-6"><p id="demop">Number of Civilians Dead:</p></div>
-  <div class="col-md-6"><p id="demo2p">Number of Police Officers Dead:</p></div>
-</div>
-<div class="row">
-    <div class="col-md-6"><div id="demo"></div></div>
-  <div class="col-md-6"><div id="demo2"></div></div>
-</div>
-
-<div class="row">
   <div class="col-md-6"><h1>Armed Stats</h1>
   <svg id=armed_svg width="400" height="200"></svg></div>
 
@@ -194,10 +193,19 @@
 <div class="row">
 <div class="col-md-6"><h1>Race stats</h1>
 <svg id=race_svg width="400" height="200"></svg></div>
-</div
+</div>
+
+<div class="row">
+  <div class="col-md-6"><p id="demop">Number of Civilians Dead:</p></div>
+  <div class="col-md-6"><p id="demo2p">Number of Police Officers Dead:</p></div>
+</div>
+<div class="row">
+    <div class="col-md-6"><div id="demo"></div></div>
+  <div class="col-md-6"><div id="demo2"></div></div>
+</div>
 
 
-<p id="lineChart"></p>
+
 
 <script id="notes">
 var selectByStates;
@@ -217,10 +225,9 @@ var stateData;
 
 
   //color range
-  var rangeCiv = ['#C4E8CD','#B6E2C1' ,'#A7DDB4','#89D19B', '#7BCC8F', '#6CC683','#5DC076', '#4FBA6A', '#3FA258', '#338448', '#286738', '#225830', '#1D4928','#173B20', '#112C18'];
+  var rangeCiv = ['#C4E8CD','#A7DDB4','#89D19B', '#7BCC8F', '#6CC683','#5DC076', '#4FBA6A', '#3FA258', '#338448', '#286738', '#225830', '#1D4928','#173B20', '#112C18'];
 
-  var rangePo = ['#E0ECF6','#B0CFE8','#A1C5E3', '#72A8D5', '#629FD0', '#5295CB', '#3476AD', '#2F6C9D',
-  '#214B6E', '#1C415E', '#17364F', '#132B3F','#050B10'];
+ var rangePo = ['#E0ECF6','#B0CFE8','#90BCDF', '#72A8D5', '#619FD1','#629FD0', '#5295CB', '#418BC8','#3476AD', '#2F6C9D','#214B6E', '#1C415E', '#17364F', '#122B3F'];
 
 
 
@@ -565,33 +572,56 @@ g_cause.append("g")
 g_cause.append("g")
   .attr("class", "x_axis")
   .attr("transform", "translate(0," + height + ")")
-  .call(d3.axisBottom(x_scale_cause).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
+  .call(d3.axisBottom(x_scale_cause).ticks(3).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
 
- function getCivInfoStates(){
+ function getCivInfoStates(stateAbbrev){
+  var chosenState;
+  var stateArray;
+
    if($("#b2015").hasClass("selected")){
-     var chosenState = selectByStates.filter(function(value){return value.key=== stateAbbrev});
-     var stateArray = chosenState[0].values.filter(function(value){return value.date ==="15"});
-   }else{
-     var chosenState = selectByStates.filter(function(value){return value.key=== stateAbbrev});
-     var stateArray = chosenState[0].values.filter(function(value){return value.date ==="16"});
-   }
+    if (stateAbbrev == "NA15"){
+      chosenState = selectByStates;
+      console.log(chosenState);
+    }
+     else{
+      chosenState = selectByStates.filter(function(value){return value.key=== stateAbbrev});
+      console.log(chosenState);
+    }
+    
+     stateArray = chosenState[0].values.filter(function(value){return value.date ==="15"});
+   } else{
+    if (stateAbbrev == "NA16")
+      chosenState = selectByStates;
+     else 
+      chosenState = selectByStates.filter(function(value){return value.key=== stateAbbrev});
 
+     stateArray = chosenState[0].values.filter(function(value){return value.date ==="16"});
+   }
 
   return stateArray;
 }
-  function getPolInfoStates(){
+  function getPolInfoStates(stateAbbrev){
+    var chosenStatePol;
     if($("#b2015").hasClass("selected")){
-      var chosenStatePol = selectByStatespol.filter(function(value){return value.key===stateAbbrev });
-      var stateArrayPol = chosenStatePol[0].values.filter(function(value){return value.year ===2015});
+      if (stateAbbrev == "NA15")
+        chosenStatePol = selectByStatespol;
+      else
+        chosenStatePol = selectByStatespol.filter(function(value){return value.key===stateAbbrev });
+
+      stateArrayPol = chosenStatePol[0].values.filter(function(value){return value.year ===2015});
     }else{
-      var chosenStatePol = selectByStatespol.filter(function(value){return value.key===stateAbbrev });
-      var stateArrayPol = chosenStatePol[0].values.filter(function(value){return value.year ===2016});
+      if (stateAbbrev == "NA16")
+        chosenStatePol = selectByStatespol;
+      else
+        chosenStatePol = selectByStatespol.filter(function(value){return value.key===stateAbbrev });
+
+      stateArrayPol = chosenStatePol[0].values.filter(function(value){return value.year ===2016});
     }
     return stateArrayPol;
   }
 
   function drawCivGraph(stateAbbrev){
-    var data= getCivInfoStates();
+    var data= getCivInfoStates(stateAbbrev);
 
     var count_gun = data.filter(function(value){return value.armed==="gun"}).length;
     var count_unarmed = data.filter(function(value){return value.armed==="unarmed"}).length;
@@ -623,8 +653,8 @@ g_cause.append("g")
       bars.enter().append("rect")
       .attr("class", "bar")
       .attr("x", 0)
-      .attr("height", y_scale.bandwidth())
-      .attr("y", function(d) { return y_scale(d.armed); })
+      .attr("height", y_scale.bandwidth()/2)
+      .attr("y", function(d) { return y_scale(d.armed)+5; })
       .attr("width", function(d) { return x_scale(d.value); })
       .on("mousemove", function(d){
           tooltip
@@ -658,8 +688,8 @@ g_cause.append("g")
        bars_gender.enter().append("rect")
        .attr("class", "bar")
        .attr("x", 0)
-       .attr("height", y_scale_gender.bandwidth())
-       .attr("y", function(d) { return y_scale_gender(d.gender); })
+       .attr("height", y_scale_gender.bandwidth()/2)
+       .attr("y", function(d) { return y_scale_gender(d.gender)+5; })
        .attr("width", function(d) { return x_scale_gender(d.value); })
        .on("mousemove", function(d){
            tooltip
@@ -698,8 +728,8 @@ g_cause.append("g")
         bars_race.enter().append("rect")
         .attr("class", "bar")
         .attr("x", 0)
-        .attr("height", y_scale_race.bandwidth())
-        .attr("y", function(d) { return y_scale_race(d.race); })
+        .attr("height", y_scale_race.bandwidth()/2)
+        .attr("y", function(d) { return y_scale_race(d.race)+5; })
         .attr("width", function(d) { return x_scale_race(d.value); })
         .on("mousemove", function(d){
             tooltip
@@ -719,7 +749,7 @@ g_cause.append("g")
 
   }
   function drawPolgraph(stateAbbrev){
-    var data = getPolInfoStates()
+    var data = getPolInfoStates(stateAbbrev);
 
     var count_1 = data.filter(function(value){return value.cause_short==="9/11 related illness"}).length;
     var count_2 = data.filter(function(value){return value.cause_short==="Accidental"}).length;
@@ -755,15 +785,18 @@ g_cause.append("g")
     {"cause_short":"Vehicular assault", "value":count_22}, {"cause_short":"Weather/Natural disaster", "value":count_23}];
 
     x_scale_cause.domain([0, d3.max(counts_cause, function(d) { return d.value; })]);
+ 
+
     y_scale_cause.domain(counts_cause.map(function(d) { return d.cause_short; }));
 
-    var bars_cause = g_cause.selectAll(".bar")
+    var bars_cause = 
+    g_cause.selectAll(".barP")
       .remove()
       .exit()
       .data(counts_cause)
 
       bars_cause.enter().append("rect")
-      .attr("class", "bar")
+      .attr("class", "barP")
       .attr("x", 0)
       .attr("height", y_scale_cause.bandwidth())
       .attr("y", function(d) { return y_scale_cause(d.cause_short); })
@@ -778,26 +811,25 @@ g_cause.append("g")
       .on("mouseout", function(d){ tooltip.style("display", "none");});
 
     g_cause.select(".x_axis")
-      .call(d3.axisBottom(x_scale_cause).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-svg3.attr("height") - 20 - 30]));
+      .call(d3.axisBottom(x_scale_cause).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
 
     g_cause.select(".y_axis")
       .call(d3.axisLeft(y_scale_cause));
   }
 
 
-  var stateAbbrev;
+var stateAbbrev;
 
 
 //displays the map, fills in according to scale, adds legend and labels
 function showMap(id, scale, variable, stateCount, year, stateData) {
 
-var clicked = false;
-var oldState; //store old state
-var oldStateID;
-var currentState; //store state you just clicked on
-var currentStateID;
-var orgColor;
-
+  var clicked = false;
+  var oldState; //store old state
+  var oldStateID;
+  var currentState; //store state you just clicked on
+  var currentStateID;
+  var orgColor;
 
   var svg = d3.select(id)
   .append("svg")
@@ -832,10 +864,9 @@ svg.select(".legendQuant").call(legend);
   .attr("y", 20)
   .text("Legend (Deaths)");
 
-  // if (year == 2015)
-  //   button2015();
-  // else
-  //   button2016();
+
+// drawCivGraph("NA15"); //use NA15 to indicate no state was selected
+// drawPolgraph("NA15");
 
   //titles
   var text = (variable == "PoliceOfficer") ? "Police Officer Deaths " + year : "Civilian Deaths " + year;
@@ -889,15 +920,18 @@ svg.select(".legendQuant").call(legend);
       });
       civpolcount(stateAbbrev);
 
-
        clicked = true;
        oldStateID = state.id;
        oldState = currentState;
 
 
        //call get info states passing in stateabbrev here
-        drawCivGraph();
-        drawPolgraph();
+       if(id=="#mapCiv"){
+        drawCivGraph(stateAbbrev);
+       }
+       else {
+        drawPolgraph(stateAbbrev);
+       } 
   }
   else {  //something has been clicked already
 
@@ -906,6 +940,15 @@ svg.select(".legendQuant").call(legend);
       console.log("same state");
       currentState.transition().duration(200).style("fill", orgColor);
       clicked = false;
+
+      if ($("#b2015").hasClass("selected")){
+          drawCivGraph("NA15"); //use NA15 to indicate no state was selected
+          drawPolgraph("NA15");
+      }
+      else{
+          drawCivGraph("NA16");
+          drawPolgraph("NA16");
+      }
 
       //this is when nothing is selected on the map
   }
@@ -930,8 +973,12 @@ svg.select(".legendQuant").call(legend);
          oldStateID = state.id;
 
           //call get info states passing in stateabbrev here
-          drawCivGraph();
-          drawPolgraph();
+       if(id=="#mapCiv"){
+        drawCivGraph(stateAbbrev);
+       }
+       else {
+        drawPolgraph(stateAbbrev);
+       } 
     }
   }
 
