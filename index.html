@@ -20,6 +20,10 @@
 
 
   <style>
+  :focus {
+  outline: 0;
+  }
+
   #menu{
     text-align: center;
   }
@@ -780,18 +784,20 @@ g_cause.append("g")
       .call(d3.axisLeft(y_scale_cause));
   }
 
-var stateAbbrev;
-var oldState; //store old state
-var oldStateID;
-var currentState; //store state you just clicked on
-var currentStateID;
-var clicked = false;
-var orgColor;
 
+  var stateAbbrev;
 
 
 //displays the map, fills in according to scale, adds legend and labels
 function showMap(id, scale, variable, stateCount, year, stateData) {
+
+var clicked = false;
+var oldState; //store old state
+var oldStateID;
+var currentState; //store state you just clicked on
+var currentStateID;
+var orgColor;
+
 
   var svg = d3.select(id)
   .append("svg")
