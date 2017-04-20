@@ -7,7 +7,18 @@
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="http://d3js.org/topojson.v2.min.js"></script>
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-   <script src="js/d3-legend.min.js"></script>
+    <script src="js/d3-legend.min.js"></script>
+
+      <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
   <style>
   #menu{
     text-align: center;
@@ -38,20 +49,19 @@
     border-radius: 0%;
     pointer-events: none;
   }
-.button {
+
+  .button {
     background-color: white;
     border: 1px solid #2A618D;
     color: #2A618D;
-    width:130px;
-    padding: 10px 20px;
-    margin:5px;
+    width:150px;
+    padding: 10px 25px;
+    margin:10px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 14px;
-    border-radius:5%;
+    font-size: 16px;
     font-family: 'Source Sans Pro',sans-serif;
-    box-shadow: 2px 2px 2px #d3d3d3;
 }
 
 .button:hover{
@@ -65,10 +75,10 @@
 }
 
   .bar {
-  fill: #3FA258;
+  fill: steelblue;
   }
   .bar:hover {
-    fill: #6CC683;
+    fill: orange;
   }
   .axis {
     font: 10px sans-serif;
@@ -92,6 +102,16 @@
   .x_axis path {
   display: none;
   }
+  .toolTip {
+  position: absolute;
+  display: none;
+  min-width: 80px;
+  height: auto;
+  background: none repeat scroll 0 0 #ffffff;
+  border: 1px solid #6F257F;
+  padding: 14px;
+  text-align: center;
+  }
 
   #civ{
     background-color: #ffffff;
@@ -107,40 +127,28 @@
     text-align: center;
   }
   #demo2{
-    /*ransform: translate(700px, -2720px) ;*/
-    margin-left: 200px;
+    margin-bottom:70px;
   }
 
   #demo{
-    float:left;
-  }
+    margin-bottom:70px;
 
-  #demop{
-    float:left;
-
-  }
-  #demo2p{
-    margin-left: 600px;
   }
 </style>
 </head>
 <body>
-<h2 id="title">Police Officer Deaths vs. Civilian Deaths</h2>
+<h2 id="title"> Civilian Deaths vs. Police Officer Deaths</h2>
 <p id="menu">
 <input id="b2015" onclick="button2015()" class="button selected" type="button" value="2015" />
 <input id="b2016" onclick="button2016()" class="button" type="button" value="2016" /><br>
-<input id="po" class="button selected" type="button" value="Police Officer" />
-<input id="civi" class="button" type="button" value="Civilian" />
+<!-- <input id="po" class="button selected" type="button" value="Police Officer" />
+<input id="civi" class="button" type="button" value="Civilian" /> -->
 </p>
 
 <div class="row">
-  <div class="col-sm-3"><p class="block" id="map"></p></div>
+  <div class="col-md-6"><p class="block" id="mapCiv"></p></div>
+  <div class="col-md-6"><p class="block" id="map"></p></div>
 </div>
-
-<h2>Civilian Deaths</h2>    
-   <p class="block" id="civilian2015"></p>   
- <br><br><br>
-
 <div id="lotsOfLittleMen">
 
 <br/><br/>
@@ -152,42 +160,44 @@
   transform: translate(700px, 0px)
 }
 </style> -->
-<!-- 
-<button id="civ" onclick="button15()" type="button">2015</button>
-
-<button id="pol" onclick="button16()" type="button">2016</button></br> -->
-
-
 <!-- <p id="demop"></p>
 <p id="demo2p"></p>
 <div id="demo"></div>
 <div id="demo2"></div> -->
 
-<p id="demop">Number of Civilians Dead:</p>
-<p id="demo2p">Number of Police Dead:</p>
-<div id="demo"></div>
-<div id="demo2"></div>
+<div class="row">
+  <div class="col-md-6"><p id="demop">Number of Civilians Dead:</p></div>
+  <div class="col-md-6"><p id="demo2p">Number of Police Officers Dead:</p></div>
+</div>
+<div class="row">
+    <div class="col-md-6"><div id="demo"></div></div>
+  <div class="col-md-6"><div id="demo2"></div></div>
 </div>
 
-<br>
-<h1>Armed Stats</h1>
-<svg id=armed_svg width="960" height="500"></svg>
+<div class="row">
+  <div class="col-md-6"><h1>Armed Stats</h1>
+  <svg id=armed_svg width="400" height="200"></svg></div>
 
+  <div class="col-md-6"><h1>Police Officer Death</h1>
+  <svg id=police_svg width="400" height="300"></svg></div>
+</div>
 
+<div class="row">
+<div class="col-md-6"><h1>Gender Stats</h1>
+<svg id=gender_svg width="400" height="100"></svg></div>
+</div>
 
-<h1>Gender Stats</h1>
-<svg id=gender_svg width="960" height="500"></svg>
+<div class="row">
+<div class="col-md-6"><h1>Race stats</h1>
+<svg id=race_svg width="400" height="200"></svg></div>
+</div
 
-<h1>Race stats</h1>
-<svg id=race_svg width="960" height="500"></svg>
-
-<h1>Police Officer Death</h1>
-<svg id=police_svg width="960" height="500"></svg>
 
 <p id="lineChart"></p>
 
 <script id="notes">
 var selectByStates;
+var updateDateCiv;
 
 
 var stateData;
@@ -201,13 +211,21 @@ var stateData;
   var policeCount2016;
   var civCount2016;
 
-  var buttonArray = ["b2015","b2016", "po", "civi"];
 
   //color range
+  var rangeCiv = ['#C4E8CD','#B6E2C1' ,'#A7DDB4','#89D19B', '#7BCC8F', '#6CC683','#5DC076', '#4FBA6A', '#3FA258', '#338448', '#286738', '#225830', '#1D4928','#173B20', '#112C18'];
+
   var rangePo = ['#E0ECF6','#B0CFE8','#A1C5E3', '#72A8D5', '#629FD0', '#5295CB', '#3476AD', '#2F6C9D',
   '#214B6E', '#1C415E', '#17364F', '#132B3F','#050B10'];
 
-  var rangeCiv = ['#C4E8CD','#A7DDB4','#89D19B', '#7BCC8F', '#6CC683','#5DC076', '#4FBA6A', '#3FA258', '#338448', '#286738', '#225830', '#1D4928','#173B20', '#112C18'];
+
+
+//civilian
+var man = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="#7BCC8F"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
+
+//police officer
+var man2 = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="#629FD0"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
+
 
 d3.queue()
 .defer(d3.json, "us.json")
@@ -216,9 +234,7 @@ d3.queue()
 .defer(d3.json, "police_death.json")
 
 .await(function (error, rawMap, rawStates, civilian, police) {
-  // datafinder15(civilian,police);
-  // datafinder16(civilian,police);
-  // clear();
+
 states = topojson.feature(rawMap, rawMap.objects.states);
 
     //fill stateCountData
@@ -243,22 +259,30 @@ states = topojson.feature(rawMap, rawMap.objects.states);
 
     showMap("#map", scalePolice2015, "PoliceOfficer", policeCount2015, 2015,stateData);
 
-    showMap("#civilian2015", scaleCiv2015, "Civilian", civCount2015, 2015,stateData);
+    showMap("#mapCiv", scaleCiv2015, "Civilian", civCount2015, 2015,stateData);
+
 
     //get police and civ data for 2016
     policeCount2016 = getPolice(2016, police, stateCountData);
     civCount2016 = getCiv(16, civilian, stateCountData);
 
 
+    var Updated_civilian = civilian;
+
+    //Updating date format
+    for(var i =0; i<Updated_civilian.length; i++){
+      var oldDate = Updated_civilian[i].date;
+      Updated_civilian[i].date = oldDate.substring(oldDate.length-2);
+    }
 
     selectByStates = d3.nest()
     .key(function(d) { return d.state; })
-    .entries(civilian);
+    .entries(Updated_civilian);
 
     selectByStatespol = d3.nest()
     .key(function(d) { return d.state; })
     .entries(police);
-
+    console.log(civilian.length);
   });
 
 
@@ -268,199 +292,118 @@ var finalarray16=[];
 
 function button2016(){
   console.log("button 2016 was clicked");
+  console.log(stateAbbrev);
+  if (stateAbbrev != undefined || stateAbbrev != null) {
+    manstring=[];
+    civdeaths=[];
+    poldeaths=[];
+    manString="";
+    manString2="";
+
+    yearvalue=[];
+    yearvalue2=[];
+    selectByStates.forEach(function(element){
+      if (element.key==stateAbbrev){
+        element.values.forEach(function(allyearelement) {
+          if (allyearelement.date.slice(-2).includes("16")){
+            yearvalue.push(allyearelement);
+
+          }
+
+        });
+
+      
+        for (var i=0;i<yearvalue.length;i++){
+          manString += '<svg id="man' +i + '"';
+          if(i>yearvalue.length){manString+="style='opacity:0;'";}
+          manString += man;
+          if(i%15 == 14){manString+="</br>";}
+        }
+          document.getElementById('demop').innerHTML = "Number of Civilians in "+element.key+" Dead during 2016: "+ yearvalue.length.toString();
+          document.getElementById('demo').innerHTML = manString;
+      }
+
+    })
+    selectByStatespol.forEach(function(element2){
+      if (element2.key==stateAbbrev){
+        element2.values.forEach(function(allyearelement) {
+          if (allyearelement.date.slice(-2).includes("16")){
+            yearvalue2.push(allyearelement);
+
+          }
+
+        });
+
+        for (var i=0;i<yearvalue2.length;i++){
+          manString2 += '<svg id="man' +i + '"';
+          if(i>yearvalue2.length){manString2+="style='opacity:0;'";}
+          manString2 += man2;
+          if(i%15 == 14){manString2+="</br>";}
+        }
+
+        document.getElementById('demo2p').innerHTML = "Number of Police in "+element2.key+" Dead duing 2016: "+ yearvalue2.length.toString();
+        document.getElementById('demo2').innerHTML = manString2;
+
+      }
+    })
+  }
 }
 
 function button2015(){
   console.log("button 2015 was clicked");
+  console.log(stateAbbrev);
+  if (stateAbbrev != undefined || stateAbbrev != null) {
+    manstring=[];
+    civdeaths=[];
+    poldeaths=[];
+    manString="";
+    manString2="";
 
+    yearvalue=[];
+    yearvalue2=[];
+    selectByStates.forEach(function(element){
+      if (element.key==stateAbbrev){
+        element.values.forEach(function(allyearelement) {
+          if (allyearelement.date.slice(-2).includes("15")){
+            yearvalue.push(allyearelement);
+
+          }
+
+        });
+
+        for (var i=0;i<yearvalue.length;i++){
+          manString += '<svg id="man' +i + '"';
+          if(i>yearvalue.length){manString+="style='opacity:0;'";}
+          manString += man;
+          if(i%15 == 14){manString+="</br>";}
+        }
+          document.getElementById('demop').innerHTML = "Number of Civilians in "+element.key+" Dead during 2015: "+ yearvalue.length.toString();
+          document.getElementById('demo').innerHTML = manString;
+      }
+
+    })
+    selectByStatespol.forEach(function(element2){
+      if (element2.key==stateAbbrev){
+        element2.values.forEach(function(allyearelement) {
+          if (allyearelement.date.slice(-2).includes("15")){
+            yearvalue2.push(allyearelement);
+
+          }
+        });
+        for (var i=0;i<yearvalue2.length;i++){
+          manString2 += '<svg id="man' +i + '"';
+          if(i>yearvalue2.length){manString2+="style='opacity:0;'";}
+          manString2 += man2;
+          if(i%15 == 14){manString2+="</br>";}
+        }
+
+        document.getElementById('demo2p').innerHTML = "Number of Police in "+element2.key+" Dead duing 2015: "+ yearvalue2.length.toString();
+        document.getElementById('demo2').innerHTML = manString2;
+
+      }
+    })
+  }
 }
-
-
-
-// function datafinder15(civilian,police){
-
-// var civdeaths=[];
-// var cdeath2015=[];
-// var cdeath2016=[];
-
-// var policedeaths=[];
-// var pdeath2015=[];
-// var pdeath2016=[];
-
-// var manString = "";
-// var manString2 = "";
-
-
-
-
-
-//   civilian.forEach(function(d) {
-//     civdeaths.push(d);
-
-//     if (d.date.slice(-2).includes("15")){
-//       cdeath2015.push(d);
-//     }
-//     else if (d.date.slice(-2).includes("16")){
-//       cdeath2016.push(d);
-//     }
-
-
-//   });
-
-
-
-
-// var man = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="red"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
-
-
-
-// for (var i=0;i<cdeath2015.length;i++){
-//     manString += '<svg id="man' +i + '"';
-//     if(i>cdeath2015.length){manString+="style='opacity:0;'";}
-//     manString += man;
-//     if(i%15 == 14){manString+="</br>";}
-// }
-
-
-
-//   police.forEach(function(d2) {
-
-//     if (d2.date.slice(-2).includes("15")){
-//       pdeath2015.push(d2);
-//     }
-//     else if (d2.date.slice(-2).includes("16")){
-//       pdeath2016.push(d2);
-//     }
-//     policedeaths.push(d2)
-//   });
-
-
-// var man2 = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="blue"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
-
-
-
-// for (var i=0;i<pdeath2015.length;i++){
-//     manString2 += '<svg id="man' +i + '"';
-//     if(i>pdeath2015.length){manString2+="style='opacity:0;'";}
-//     manString2 += man2;
-//     if(i%15 == 14){manString2+="</br>";}
-// }
-//   document.getElementById('demop').innerHTML = "Number of Civilians Dead: "+ cdeath2015.length.toString();
-//   document.getElementById('demo2p').innerHTML = "Number of Police Dead: "+ pdeath2015.length.toString();
-//   document.getElementById('demo').innerHTML = manString;
-//   document.getElementById('demo2').innerHTML = manString2;
-//   finalarray15.push("Number of Civilians Dead: "+ cdeath2015.length.toString());
-//   finalarray15.push("Number of Police Dead: "+ pdeath2015.length.toString());
-//   finalarray15.push(manString);
-//   finalarray15.push(manString2);
-//   return finalarray15;
-// }
-
-// function button15(){
-//   document.getElementById('demop').innerHTML = finalarray15[0];
-//   document.getElementById('demo2p').innerHTML = finalarray15[1];
-//   document.getElementById('demo').innerHTML = finalarray15[2];
-//   document.getElementById('demo2').innerHTML = finalarray15[3];
-// }
-
-// function button16(){
-//   document.getElementById('demop').innerHTML = finalarray16[0];
-//   document.getElementById('demo2p').innerHTML = finalarray16[1];
-//   document.getElementById('demo').innerHTML = finalarray16[2];
-//   document.getElementById('demo2').innerHTML = finalarray16[3];
-// }
-
-
-// function clear(){
-//   document.getElementById('demop').innerHTML = "";
-//   document.getElementById('demo2p').innerHTML = "";
-//   document.getElementById('demo').innerHTML = "";
-//   document.getElementById('demo2').innerHTML = "";
-// }
-
-
-
-// function datafinder16(civilian,police){
-
-// var civdeaths=[];
-// var cdeath2015=[];
-// var cdeath2016=[];
-
-// var policedeaths=[];
-// var pdeath2015=[];
-// var pdeath2016=[];
-
-// var manString = "";
-// var manString2 = "";
-
-// var finalarray=[];
-
-
-
-
-//   civilian.forEach(function(d) {
-//     civdeaths.push(d);
-
-
-//     if (d.date.slice(-2).includes("15")){
-//       cdeath2015.push(d);
-//     }
-//     else if (d.date.slice(-2).includes("16")){
-//       cdeath2016.push(d);
-//     }
-
-
-//   });
-
-
-
-
-// var man = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="red"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
-
-
-
-// for (var i=0;i<cdeath2016.length;i++){
-//     manString += '<svg id="man' +i + '"';
-//     if(i>cdeath2016.length){manString+="style='opacity:0;'";}
-//     manString += man;
-//     if(i%15 == 14){manString+="</br>";}
-// }
-
-
-
-//   police.forEach(function(d2) {
-
-//     if (d2.date.slice(-2).includes("15")){
-//       pdeath2015.push(d2);
-//     }
-//     else if (d2.date.slice(-2).includes("16")){
-//       pdeath2016.push(d2);
-//     }
-//     policedeaths.push(d2)
-//   });
-
-
-// var man2 = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="blue"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
-
-
-
-// for (var i=0;i<pdeath2016.length;i++){
-//     manString2 += '<svg id="man' +i + '"';
-//     if(i>pdeath2016.length){manString2+="style='opacity:0;'";}
-//     manString2 += man2;
-//     if(i%15 == 14){manString2+="</br>";}
-// }
-//   document.getElementById('demop').innerHTML = "Number of Civilians Dead: "+ cdeath2016.length.toString();
-//   document.getElementById('demo2p').innerHTML = "Number of Police Dead: "+ pdeath2016.length.toString();
-//   document.getElementById('demo').innerHTML = manString;
-//   document.getElementById('demo2').innerHTML = manString2;
-//   finalarray16.push("Number of Civilians Dead: "+ cdeath2016.length.toString());
-//   finalarray16.push("Number of Police Dead: "+ pdeath2016.length.toString());
-//   finalarray16.push(manString);
-//   finalarray16.push(manString2);
-//   return finalarray16;
-// }
-
 
 function civpolcount(abbreviation){
   manstring=[];
@@ -469,39 +412,16 @@ function civpolcount(abbreviation){
   manString="";
   manString2="";
 
-  console.log(abbreviation);
-  // var selectedstates=helpercivpol();
-  selectByStates.forEach(function(element){
-    if (element.key==abbreviation){
-      console.log(element.values.length);
-      var man = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="#3FA258"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
-      for (var i=0;i<element.values.length;i++){
-        manString += '<svg id="man' +i + '"';
-        if(i>element.values.length){manString+="style='opacity:0;'";}
-        manString += man;
-        if(i%15 == 14){manString+="</br>";}
-      }
-        document.getElementById('demop').innerHTML = "Number of Civilians Dead in "+element.key+" : "+ element.values.length.toString();
-        document.getElementById('demo').innerHTML = manString;
-    }
+  if ($("#b2015").hasClass("selected")){
 
-  })
-  selectByStatespol.forEach(function(element2){
-    if (element2.key==abbreviation){
-      console.log(element2.values.length);
-      var man2 = 'class="man" x="0px" y="0px" width="38px" height="38px" viewBox="5.0 -10.0 100.0 135.0" enable-background="new 0 0 100 100" xml:space="preserve" fill="rgb(114, 168, 213)"><circle cx="50" cy="11.705" r="11.705" /><path d="M66.789,57.198c2.449,0,4.055-2.856,3.569-6.347l-2.441-17.534c-0.486-3.491-3.768-6.347-7.292-6.347H39.374  c-3.524,0-6.806,2.856-7.292,6.347l-2.44,17.534c-0.486,3.491,1.12,6.347,3.569,6.347s4.667,2.876,4.929,6.391l2.242,30.021  c0.262,3.515,3.361,6.391,6.885,6.391h5.467c3.524,0,6.623-2.876,6.885-6.391l2.24-30.021C62.121,60.074,64.34,57.198,66.789,57.198  z"/></svg>';
-      for (var i=0;i<element2.values.length;i++){
-        manString2 += '<svg id="man' +i + '"';
-        if(i>element2.values.length){manString2+="style='opacity:0;'";}
-        manString2 += man2;
-        if(i%15 == 14){manString2+="</br>";}
-      }
+    button2015();
 
-      document.getElementById('demo2p').innerHTML = "Number of Police Dead in "+element2.key+" : "+ element2.values.length.toString();
-      document.getElementById('demo2').innerHTML = manString2;
+  }
+  else if ($("#b2016").hasClass("selected")){
 
-    }
-  })
+    button2016();
+
+  }
 
 }
 
@@ -565,28 +485,13 @@ var projection = d3.geoAlbersUsa().scale(75);
 var pathGenerator = d3.geoPath().projection(projection);
 var states;
 
-
-function getCivInfoStates(){
-  console.log(selectByStates);
-  var chosenState = selectByStates.filter(function(value){return value.key=== abbrev });
-  console.log(chosenState[0].values);
-
-  stated.push(chosenState[0].values);
-}
-
-
-
-
-
-
-
 var svg = d3.select("#armed_svg"),
   margin = {top: 20, right: 20, bottom: 30, left: 150},
   width = +svg.attr("width") - margin.left - margin.right,
   height = +svg.attr("height") - margin.top - margin.bottom;
 var g = svg.append("g")
      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-var tooltip = d3.select("body").append("div").attr("class", "tooltip");
+var tooltip = d3.select("body").append("div").attr("class", "toolTip");
 var x_scale = d3.scaleLinear().range([0, width]);
 var y_scale = d3.scaleBand().range([height, 0]).padding(0.1);
 
@@ -638,37 +543,69 @@ g_race.append("g")
   .attr("transform", "translate(0," + height + ")")
   .call(d3.axisBottom(x_scale_race).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
 
+var svg3 = d3.select("#police_svg"),
+  margin = {top: 20, right: 20, bottom: 30, left: 150},
+  width = +svg3.attr("width") - margin.left - margin.right,
+  height = +svg3.attr("height") - margin.top - margin.bottom;
+
+var g_cause = svg3.append("g")
+     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var x_scale_cause = d3.scaleLinear().range([0, width]);
+var y_scale_cause = d3.scaleBand().range([height, 0]).padding(0.1);
+
+g_cause.append("g")
+.attr("class", "y_axis")
+.call(d3.axisLeft(y_scale_cause));
+
+g_cause.append("g")
+  .attr("class", "x_axis")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(x_scale_cause).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
 
  function getCivInfoStates(){
+   if($("#b2015").hasClass("selected")){
+     var chosenState = selectByStates.filter(function(value){return value.key=== stateAbbrev});
+     var stateArray = chosenState[0].values.filter(function(value){return value.date ==="15"});
+   }else{
+     var chosenState = selectByStates.filter(function(value){return value.key=== stateAbbrev});
+     var stateArray = chosenState[0].values.filter(function(value){return value.date ==="16"});
+   }
 
-  // console.log(stateAbbrev);
-  var chosenState = selectByStates.filter(function(value){return value.key=== stateAbbrev });
-  // console.log(chosenState);
-  var stateArray = chosenState[0].values;
 
   return stateArray;
 }
+  function getPolInfoStates(){
+    if($("#b2015").hasClass("selected")){
+      var chosenStatePol = selectByStatespol.filter(function(value){return value.key===stateAbbrev });
+      var stateArrayPol = chosenStatePol[0].values.filter(function(value){return value.year ===2015});
+    }else{
+      var chosenStatePol = selectByStatespol.filter(function(value){return value.key===stateAbbrev });
+      var stateArrayPol = chosenStatePol[0].values.filter(function(value){return value.year ===2016});
+    }
+    return stateArrayPol;
+  }
 
   function drawCivGraph(stateAbbrev){
     var data= getCivInfoStates();
 
-    var count_gun = data.filter(function(value){return value.armed==="gun"&&  1/01/15<value.date<12/30/15}).length;
+    var count_gun = data.filter(function(value){return value.armed==="gun"}).length;
     var count_unarmed = data.filter(function(value){return value.armed==="unarmed"}).length;
     var count_vehicle = data.filter(function(value){return value.armed==="vehicle"}).length;
     var count_knife = data.filter(function(value){return value.armed==="knife"}).length;
     var count_toy_weapon = data.filter(function(value){return value.armed==="toy weapon" }).length;
-    var count_undetermined = data.filter(function(value){return value.armed==="undetermined" &&  1/01/15<value.date<12/30/15 }).length;
+    var count_undetermined = data.filter(function(value){return value.armed==="undetermined" }).length;
     var count_other = data.filter(function(value){
       if(value.armed==="gun" || value.armed==="unarmed" || value.armed==="vehicle" || value.armed ==="knife" || value.armed ==="toy weapon" || value.armed ==="undetermined"){
         return false;
       }
       return true;
     }).length;
-    //console.log(count_other);
+    console.log(count_other);
 
     var counts_armed = [{"armed":"Gun","value":count_gun},{"armed":"Knife","value":count_knife}, {"armed":"Unarmed","value":count_unarmed},
     {"armed":"Vehicle","value":count_vehicle}, {"armed":"Toy Weapon","value":count_toy_weapon}, {"armed":"Undetermined","value":count_undetermined}, {"armed":"Other", "value":count_other}];
-    //console.log(counts_armed);
+    console.log(counts_armed);
 
 
     x_scale.domain([0, d3.max(counts_armed, function(d) { return d.value; })]);
@@ -775,54 +712,72 @@ g_race.append("g")
       g_race.select(".y_axis")
         .call(d3.axisLeft(y_scale_race));
 
-      // var svg3 = d3.select("#police_svg"),
-      //   margin = {top: 20, right: 20, bottom: 30, left: 150},
-      //   width = +svg.attr("width") - margin.left - margin.right,
-      //   height = +svg.attr("height") - margin.top - margin.bottom;
-      //
-      // var g_cause = svg3.append("g")
-      //    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-      //
-      //
-      //  var counts_cause = d3.nest()
-      //   .key(function(d) { return d.cause_short; })
-      //   .rollup(function(v) { return v.length; })
-      //   .entries(police);
-      //
-      //   console.log(counts_cause);
-      //
-      //  var x_scale_cause = d3.scaleLinear().domain([0, d3.max(counts_cause, function(d) { return d.value; })]).range([0, width]);
-      //  var y_scale_cause = d3.scaleBand().domain(counts_cause.map(function(d) { return d.key; })).range([height, 0]).padding(0.1);
-      //
-      //  //Creating horizontal bar graph for Police deaths
-      //
-      //  var bars_cause = g_cause.selectAll(".bar")
-      //    .data(counts_cause)
-      //    .enter().append("rect")
-      //    .attr("class", "bar")
-      //    .attr("x", 0)
-      //    .attr("height", y_scale_cause.bandwidth())
-      //    .attr("y", function(d) { return y_scale_cause(d.key); })
-      //    .attr("width", function(d) { return x_scale_cause(d.value); })
-      //    .on("mousemove", function(d){
-      //        tooltip
-      //          .style("left", d3.event.pageX - 50 + "px")
-      //          .style("top", d3.event.pageY - 70 + "px")
-      //          .style("display", "inline-block")
-      //          .html((d.key) + "<br>" + (d.value) + " cases");
-      //    })
-      //     .on("mouseout", function(d){ tooltip.style("display", "none");});
-      //
-      //  g_cause.append("g")
-      //  .attr("class", "y_axis")
-      //  .call(d3.axisLeft(y_scale_cause));
-      //
-      //  g_cause.append("g")
-      //    .data(counts_cause)
-      //    .attr("class", "x_axis")
-      //    .attr("transform", "translate(0," + height + ")")
-      //    .call(d3.axisBottom(x_scale_cause).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
 
+  }
+  function drawPolgraph(stateAbbrev){
+    var data = getPolInfoStates()
+
+    var count_1 = data.filter(function(value){return value.cause_short==="9/11 related illness"}).length;
+    var count_2 = data.filter(function(value){return value.cause_short==="Accidental"}).length;
+    var count_3 = data.filter(function(value){return value.cause_short==="Aircraft accident"}).length;
+    var count_4 = data.filter(function(value){return value.cause_short==="Animal related"}).length;
+    var count_5 = data.filter(function(value){return value.cause_short==="Asphyxiation"}).length;
+    var count_6 = data.filter(function(value){return value.cause_short==="Assault"}).length;
+    var count_7 = data.filter(function(value){return value.cause_short==="Automobile accident"}).length;
+    var count_8 = data.filter(function(value){return value.cause_short==="Bomb"}).length;
+    var count_9 = data.filter(function(value){return value.cause_short==="Drowned"}).length;
+    var count_10 = data.filter(function(value){return value.cause_short==="Duty related illness"}).length;
+    var count_11 = data.filter(function(value){return value.cause_short==="Fall"}).length;
+    var count_12 = data.filter(function(value){return value.cause_short==="Fire"}).length;
+    var count_13 = data.filter(function(value){return value.cause_short==="Gunfire"}).length;
+    var count_14 = data.filter(function(value){return value.cause_short==="Gunfire (Accidental)"}).length;
+    var count_15 = data.filter(function(value){return value.cause_short==="Heart attack"}).length;
+    var count_16 = data.filter(function(value){return value.cause_short==="Heat exhaustion"}).length;
+    var count_17 = data.filter(function(value){return value.cause_short==="Poisoned"}).length;
+    var count_18 = data.filter(function(value){return value.cause_short==="Stabbed"}).length;
+    var count_19 = data.filter(function(value){return value.cause_short==="Struck by vehicle"}).length;
+    var count_20 = data.filter(function(value){return value.cause_short==="Training accident"}).length;
+    var count_21 = data.filter(function(value){return value.cause_short==="Vehicle pursuit"}).length;
+    var count_22 = data.filter(function(value){return value.cause_short==="Vehicular assault"}).length;
+    var count_23 = data.filter(function(value){return value.cause_short==="Weather/Natural disaster"}).length;
+
+    var counts_cause = [{"cause_short":"9/11 related illness", "value":count_1}, {"cause_short":"Accidental", "value":count_2}, {"cause_short":"Aircraft accident", "value":count_3},
+    {"cause_short":"Animal related", "value":count_4}, {"cause_short":"Asphyxiation", "value":count_5}, {"cause_short":"Assault", "value":count_6},
+    {"cause_short":"Automobile accident", "value":count_7},{"cause_short":"Bomb", "value":count_8}, {"cause_short":"Drowned", "value":count_9},
+    {"cause_short":"Duty related illness", "value":count_10},{"cause_short":"Fall", "value":count_11}, {"cause_short":"Fire", "value":count_12},
+    {"cause_short":"Gunfire", "value":count_13}, {"cause_short":"Gunfire (Accidental)", "value":count_14},{"cause_short":"Heart attack", "value":count_15},
+    {"cause_short":"Heat exhaustion", "value":count_16},{"cause_short":"Poisoned", "value":count_17}, {"cause_short":"Stabbed", "value":count_18},
+    {"cause_short":"Struck by vehicle", "value":count_19},{"cause_short":"Training accident", "value":count_20},{"cause_short":"Vehicle pursuit", "value":count_21},
+    {"cause_short":"Vehicular assault", "value":count_22}, {"cause_short":"Weather/Natural disaster", "value":count_23}];
+
+    x_scale_cause.domain([0, d3.max(counts_cause, function(d) { return d.value; })]);
+    y_scale_cause.domain(counts_cause.map(function(d) { return d.cause_short; }));
+
+    var bars_cause = g_cause.selectAll(".bar")
+      .remove()
+      .exit()
+      .data(counts_cause)
+
+      bars_cause.enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", 0)
+      .attr("height", y_scale_cause.bandwidth())
+      .attr("y", function(d) { return y_scale_cause(d.cause_short); })
+      .attr("width", function(d) { return x_scale_cause(d.value); })
+      .on("mousemove", function(d){
+          tooltip
+            .style("left", d3.event.pageX - 50 + "px")
+            .style("top", d3.event.pageY - 70 + "px")
+            .style("display", "inline-block")
+            .html((d.cause_short) + "<br>" + (d.value) + " cases");
+      })
+      .on("mouseout", function(d){ tooltip.style("display", "none");});
+
+    g_cause.select(".x_axis")
+      .call(d3.axisBottom(x_scale_cause).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-svg3.attr("height") - 20 - 30]));
+
+    g_cause.select(".y_axis")
+      .call(d3.axisLeft(y_scale_cause));
   }
 
 var stateAbbrev;
@@ -837,9 +792,9 @@ var orgColor;
 
 //displays the map, fills in according to scale, adds legend and labels
 function showMap(id, scale, variable, stateCount, year, stateData) {
+
   var svg = d3.select(id)
   .append("svg")
-  .attr("id","mapSvg")
   .attr("width", 500)
   .attr("height", 400);
 
@@ -853,7 +808,7 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
   .attr("class", "tooltip")
   .style("opacity", 0);
 
-  //add legend
+//add legend
 svg.append("g")
   .attr("class", "legendQuant")
   .attr("transform", "translate(420,30)");
@@ -865,12 +820,16 @@ var legend = d3.legendColor()
   .scale(scale);
 
 svg.select(".legendQuant").call(legend);
-
   svg.append("text")
   .attr("id", "title")
   .attr("x", 420)
   .attr("y", 20)
   .text("Legend (Deaths)");
+
+  // if (year == 2015)
+  //   button2015();
+  // else
+  //   button2016();
 
   //titles
   var text = (variable == "PoliceOfficer") ? "Police Officer Deaths " + year : "Civilian Deaths " + year;
@@ -887,6 +846,7 @@ svg.select(".legendQuant").call(legend);
   .data(states.features);
 
   paths.enter()
+  //.append("path")
   .insert("path", ".graticule")
   .attr("class", "state")
   .merge(paths)
@@ -894,6 +854,7 @@ svg.select(".legendQuant").call(legend);
   .attr("stroke-width", 0.5)
   .style("fill", function (state) {
     var id = state.id;
+    //console.log(stateCount);
     for (var i = 0; i < stateCount.length; i++){
       var stateID = stateCount[i].key;
       if (id == stateID){
@@ -913,23 +874,26 @@ svg.select(".legendQuant").call(legend);
 
   if (!clicked){
       orgColor = currentState.style("fill");
-      currentState.transition().duration(200).style("fill","#939393");
+      currentState.transition().duration(200).style("fill","rgb(169, 169, 169)");
 
       var currID = state.id;
       stateData.forEach(function(d){
          if (currID == d.key)
             stateAbbrev = d.value.abbreviation;
       });
-       civpolcount(stateAbbrev);
+      civpolcount(stateAbbrev);
+
 
        clicked = true;
        oldStateID = state.id;
        oldState = currentState;
 
-       //display armed/gender bar graphs
+
+       //call get info states passing in stateabbrev here
         drawCivGraph();
+        drawPolgraph();
   }
-  else { 
+  else {  //something has been clicked already
 
     //check if you are selecting the old state
     if (oldStateID == currentStateID){
@@ -937,36 +901,36 @@ svg.select(".legendQuant").call(legend);
       currentState.transition().duration(200).style("fill", orgColor);
       clicked = false;
 
-      //DISPLAY DEFAULT HERE: BARS/PEOPLE(2015) 
-      if ( $("#b2015").hasClass("selected") ){
-        button2015();     
-      }
-      else {
-        button2016();
-      }
+      //this is when nothing is selected on the map
   }
     else {
         oldState.style("fill", orgColor);
+
         orgColor = currentState.style("fill");
-        currentState.transition().duration(200).style("fill","#939393");
+
+        currentState
+        .transition().duration(200).style("fill","rgb(169, 169, 169)");
         var currID = state.id;
 
         stateData.forEach(function(d){
            if (currID == d.key)
             stateAbbrev = d.value.abbreviation;
+            civpolcount(stateAbbrev);
+
         });
-        civpolcount(stateAbbrev);
-         //console.log(stateAbbrev);
+         console.log(stateAbbrev);
          clicked = true;
          oldState = currentState;
          oldStateID = state.id;
 
-          //display bar graphs
+          //call get info states passing in stateabbrev here
           drawCivGraph();
+          drawPolgraph();
     }
   }
-  })
 
+
+  })
   .on("mouseover", function (state) {
     d3.select(this)
     .attr("stroke","black")
@@ -1013,24 +977,9 @@ svg.select(".legendQuant").call(legend);
 //scales the @param variable graph to @param scale in @param year with @param scale
 function scaleTo(map, variable, scale, year){
   clicked = false;
+  var svg = d3.select(map);
 
   var text = (variable == "police") ? "Police Officer Deaths " + year : "Civilian Deaths " + year;
-
-  var svg = d3.select("#mapSvg");
-
- svg.selectAll(".legendQuant").remove();
-
- svg.append("g")
-  .attr("class", "legendQuant")
-  .attr("transform", "translate(420,30)");
-
-var legend = d3.legendColor()
-  .labelFormat(d3.format("d"))
-  .useClass(false)
-  .titleWidth(100)
-  .scale(scale);
-
-svg.select(".legendQuant").call(legend);
 
   svg.select("#title")
       .text(text)
@@ -1099,9 +1048,6 @@ svg.select(".legendQuant").call(legend);
     .attr("stroke", "white")
 
   });
-
-
-
 }
 
 //return states + death counts for @param year
@@ -1120,30 +1066,7 @@ function getCount(vari, year){
   }
 }
 
-var selected = false;
-
-//fix this maybe
-// d3.select("#menu").selectAll("input")
-// .data(buttonArray).enter()
-// .append("input")
-// .attr("type","button")
-// .attr("class","button")
-// .attr("id", function(d){return d;})
-// .attr("value", function (d){return d;} )
-// .on("click", function (d){
-//   if (!selected){
-//     d3.select(this)
-//     .style("background-color","#2A618D")
-//     .style("color","white");
-//     selected = true;
-//   }
-//   else {
-//      d3.select(this)
-//     .style("background-color","#white")
-//     .style("color","2A618D");
-//     selected = false;
-//   }
-// })
+//var selected = false;
 
 
 //jQuery to toggle buttons
@@ -1155,16 +1078,13 @@ $("#b2015").click(function(){
   else{
     $(this).addClass("selected");
     $("#b2016").removeClass("selected");
-
   }
 
   //populate the map
-  if ($("#po").hasClass("selected")){
-      scaleTo("#map","police", scalePolice2015, 2015);
-  }
-  else if ($("#civi").hasClass("selected")){
-    scaleTo("#map","civilian", scaleCiv2015, 2015);
-  }
+  scaleTo("#map","police", scalePolice2015, 2015);
+
+  scaleTo("#mapCiv","civilian", scaleCiv2015, 2015);
+  
 });
 
 $("#b2016").click(function(){
@@ -1177,45 +1097,10 @@ if ($(this).hasClass("selected")){
   }
 
   //populate the map
-  if ($("#po").hasClass("selected")){
     scaleTo("#map","police", scalePolice2015, 2016);
-  }
-  else if ($("#civi").hasClass("selected")){
-    scaleTo("#map","civilian", scaleCiv2015, 2016);
-  }
-});
-$("#po").click(function(){
-  if ($(this).hasClass("selected")){
-    $("#civi").removeClass("selected");
-  }
-  else{
-    $(this).addClass("selected");
-    $("#civi").removeClass("selected");
-  }
-  //populate the map
-  if ($("#b2015").hasClass("selected")){
-    scaleTo("#map","police", scalePolice2015, 2015);
-  }
-  else {
-    console.log("switching to 2015");
-    scaleTo("#map","police", scalePolice2015, 2016);
-  }
-});
-$("#civi").click(function(){
-  if ($(this).hasClass("selected")){
-    $("#po").removeClass("selected");
-  }
-  else{
-    $(this).addClass("selected");
-    $("#po").removeClass("selected");
-  }
-  //populate the map
-  if ($("#b2015").hasClass("selected")){
-    scaleTo("#map","civilian", scaleCiv2015, 2015);
-  }
-  else if ($("#b2016").hasClass("selected")){
-    scaleTo("#map","civilian", scaleCiv2015, 2016);
-  }
+  
+    scaleTo("#mapCiv","civilian", scaleCiv2015, 2016);
+  
 });
 
 </script>
