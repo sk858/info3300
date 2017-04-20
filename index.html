@@ -63,10 +63,10 @@
 }
 
   .bar {
-	fill: steelblue;
+  fill: steelblue;
   }
   .bar:hover {
-  	fill: orange;
+    fill: orange;
   }
   .axis {
     font: 10px sans-serif;
@@ -88,10 +88,10 @@
     margin-left: 5px;
   }
   .x_axis path {
-	display: none;
+  display: none;
   }
   .toolTip {
-	position: absolute;
+  position: absolute;
   display: none;
   min-width: 80px;
   height: auto;
@@ -591,8 +591,10 @@ function getCivInfoStates(){
   console.log(selectByStates);
   var chosenState = selectByStates.filter(function(value){return value.key=== abbrev });
   console.log(chosenState[0].values);
+
   stated.push(chosenState[0].values);
 }
+
 
 
 
@@ -988,7 +990,9 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
            if (currID == d.key)
             stateAbbrev = d.value.abbreviation;
 
+
             civpolcount(stateAbbrev);
+
 
         });
          console.log(stateAbbrev);
@@ -1000,12 +1004,14 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
           drawCivGraph();
     }
 
+
   }
 
      
      
 
   })
+
 
 
   .on("mouseover", function (state) {
