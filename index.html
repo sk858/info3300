@@ -6,25 +6,26 @@
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600" rel="stylesheet">
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="http://d3js.org/topojson.v2.min.js"></script>
-   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-    <script src="js/d3-legend.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="js/d3-legend.min.js"></script>
 
-      <!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
-<!-- jQuery library -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
 
-<!-- Latest compiled JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <!-- Latest compiled JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
   <style>
   :focus {
-  outline: 0;
+    outline: 0;
   }
 
   #menu{
     text-align: center;
+    margin-bottom:30px;
   }
   .block {
     /*border: solid white 1px; */
@@ -32,8 +33,8 @@
     margin: auto;
   }
   body {
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 5%;
+    margin-right: 5%;
     font-size:10px;
     font-family: 'Source Sans Pro',sans-serif;
     background-color: #ffffff;
@@ -53,15 +54,15 @@
     pointer-events: none;
   }
 
-.toolTip {
-  position: absolute;
-  display: none;
-  min-width: 90px;
-  height: auto;
-  background: #939393;
-  color:white;
-  padding: 14px;
-  text-align: center;
+  .toolTip {
+    position: absolute;
+    display: none;
+    min-width: 90px;
+    height: auto;
+    background: #939393;
+    color:white;
+    padding: 14px;
+    text-align: center;
   }
 
   .button {
@@ -76,26 +77,26 @@
     display: inline-block;
     font-size: 16px;
     font-family: 'Source Sans Pro',sans-serif;
-}
+  }
 
-.button:hover{
-  background-color: #2A618D;
-  color: white;
-}
+  .button:hover{
+    background-color: #2A618D;
+    color: white;
+  }
 
-.selected{
-  background-color: #2A618D;
-  color: white;
-}
+  .selected{
+    background-color: #2A618D;
+    color: white;
+  }
 
   .bar {
-  fill:#7BCC8F;
+    fill:#7BCC8F;
   }
   .bar:hover {
     fill-opacity:0.7;
   }
   .barP {
-  fill: #629FD0;
+    fill: #629FD0;
   }
   .barP:hover {
     fill-opacity:0.7;
@@ -106,9 +107,9 @@
   }
   .x_axis path,
   .x_axis line {
-  fill: none;
-  stroke: #D4D8DA;
-  stroke-width: 1px;
+    fill: none;
+    stroke: #D4D8DA;
+    stroke-width: 1px;
   }
   .y_axis{
     padding-left: 10px;
@@ -121,7 +122,7 @@
     margin-left: 5px;
   }
   .x_axis path {
-  display: none;
+    display: none;
   }
 
 
@@ -137,6 +138,7 @@
   }
   #title{
     text-align: center;
+    margin-bottom:40px;
   }
   #demo2{
     margin-bottom:70px;
@@ -146,24 +148,46 @@
     margin-bottom:70px;
 
   }
-</style>
+
+  .tick line {
+    stroke-dasharray: 2 2 ;
+    stroke: #d3d3d3;
+  }
+
+  .svgMap{
+    text-align: center;
+  }
+
+  h3{
+    text-align:left;
+  }
+
+  #desc{
+    font-size:13px;
+    text-align: center;
+    padding:20px;
+  }
+
+
+  </style>
 </head>
 <body>
-<h2 id="title"> Civilian Deaths vs. Police Officer Deaths</h2>
-<p id="menu">
-<input id="b2015" onclick="button2015()" class="button selected" type="button" value="2015" />
-<input id="b2016" onclick="button2016()" class="button" type="button" value="2016" /><br>
+  <h1 id="title"> Civilian Deaths vs. Police Officer Deaths</h1>
+  <p id="desc">Click on a state to learn more!</p>
+  <p id="menu">
+    <input id="b2015" onclick="button2015()" class="button selected" type="button" value="2015" />
+    <input id="b2016" onclick="button2016()" class="button" type="button" value="2016" /><br>
 <!-- <input id="po" class="button selected" type="button" value="Police Officer" />
-<input id="civi" class="button" type="button" value="Civilian" /> -->
+  <input id="civi" class="button" type="button" value="Civilian" /> -->
 </p>
 
 <div class="row">
-  <div class="col-md-6"><p class="block" id="mapCiv"></p></div>
-  <div class="col-md-6"><p class="block" id="map"></p></div>
+  <div class="col-md-6 svgMap"><p class="block" id="mapCiv"></p></div>
+  <div class="col-md-6 svgMap"><p class="block" id="map"></p></div>
 </div>
 <div id="lotsOfLittleMen">
 
-<br/><br/>
+  <br/><br/>
 
 <!-- <svg id="dividingline" width="50" height="2000">  <line x1="5" y1="5" x2="5" y2="1950" stroke="gray" stroke-width="5"  /></svg>
 
@@ -178,41 +202,43 @@
 <div id="demo2"></div> -->
 
 <div class="row">
-  <div class="col-md-6"><h1>Armed Stats</h1>
-  <svg id=armed_svg width="400" height="200"></svg></div>
+  <div class="col-md-6">
+    <div class="row"><h3>Armed Stats</h3>
+    <svg id=armed_svg width="400" height="200"><p class="yearState"></p></svg>
+    </div>
 
-  <div class="col-md-6"><h1>Police Officer Death</h1>
-  <svg id=police_svg width="400" height="300"></svg></div>
-</div>
+    <div class="row">
+      <h3>Gender Stats</h3>
+        <svg id=gender_svg width="400" height="80"></svg>
+      </div>
 
-<div class="row">
-<div class="col-md-6"><h1>Gender Stats</h1>
-<svg id=gender_svg width="400" height="100"></svg></div>
-</div>
+      <div class="row">
+        <h3>Race stats</h3>
+          <svg id=race_svg width="400" height="170"></svg>
+      </div>
+          </div>
 
-<div class="row">
-<div class="col-md-6"><h1>Race stats</h1>
-<svg id=race_svg width="400" height="200"></svg></div>
-</div>
-
-<div class="row">
-  <div class="col-md-6"><p id="demop">Number of Civilians Dead:</p></div>
-  <div class="col-md-6"><p id="demo2p">Number of Police Officers Dead:</p></div>
-</div>
-<div class="row">
-    <div class="col-md-6"><div id="demo"></div></div>
-  <div class="col-md-6"><div id="demo2"></div></div>
-</div>
-
-
-
-
-<script id="notes">
-var selectByStates;
-var updateDateCiv;
+      <div class="col-md-6">
+        <div class="row"><h3>Cause of Death</h3>
+         <svg id=police_svg width="500" height="600"></svg></div></div>
+    </div>
+  </div>
+        <div class="row">
+          <div class="col-md-6"><p id="demop">Number of Civilians Dead:</p></div>
+          <div class="col-md-6"><p id="demo2p">Number of Police Officers Dead:</p></div>
+        </div>
+        <div class="row">
+          <div class="col-md-6"><div id="demo"></div></div>
+          <div class="col-md-6"><div id="demo2"></div></div>
+        </div>
 
 
-var stateData;
+        <script id="notes">
+        var selectByStates;
+        var updateDateCiv;
+
+
+        var stateData;
   var stateCountData = []; // state to count of police deaths and civ deaths
 
   var scaleCiv2015; //scale for civilian deaths
@@ -227,7 +253,7 @@ var stateData;
   //color range
   var rangeCiv = ['#C4E8CD','#A7DDB4','#89D19B', '#7BCC8F', '#6CC683','#5DC076', '#4FBA6A', '#3FA258', '#338448', '#286738', '#225830', '#1D4928','#173B20', '#112C18'];
 
- var rangePo = ['#E0ECF6','#B0CFE8','#90BCDF', '#72A8D5', '#619FD1','#629FD0', '#5295CB', '#418BC8','#3476AD', '#2F6C9D','#214B6E', '#1C415E', '#17364F', '#122B3F'];
+  var rangePo = ['#E0ECF6','#B0CFE8','#90BCDF', '#72A8D5', '#619FD1','#629FD0', '#5295CB', '#418BC8','#3476AD', '#2F6C9D','#214B6E', '#1C415E', '#17364F', '#122B3F'];
 
 
 
@@ -246,7 +272,7 @@ d3.queue()
 
 .await(function (error, rawMap, rawStates, civilian, police) {
 
-states = topojson.feature(rawMap, rawMap.objects.states);
+  states = topojson.feature(rawMap, rawMap.objects.states);
 
     //fill stateCountData
     stateData = d3.entries(rawStates);
@@ -268,8 +294,19 @@ states = topojson.feature(rawMap, rawMap.objects.states);
     scalePolice2015 = d3.scaleQuantize().domain([0,maxPolice2015]).range(rangePo);
     scaleCiv2015 = d3.scaleQuantize().domain([0,maxCiv2015]).range(rangeCiv);
 
-    showMap("#map", scalePolice2015, "PoliceOfficer", policeCount2015, 2015,stateData);
+    selectYearPo = d3.nest()
+    .key(function(d){ return d.year;})
+    .entries(police);
 
+    selectYearCiv = d3.nest()
+    .key(function(d){ 
+      var oldDate = d.date;
+      newDate = oldDate.substring(oldDate.length-2);
+     return newDate;
+    })
+    .entries(civilian);
+
+    showMap("#map", scalePolice2015, "PoliceOfficer", policeCount2015, 2015,stateData);
     showMap("#mapCiv", scaleCiv2015, "Civilian", civCount2015, 2015,stateData);
 
 
@@ -294,6 +331,8 @@ states = topojson.feature(rawMap, rawMap.objects.states);
     .key(function(d) { return d.state; })
     .entries(police);
     console.log(civilian.length);
+
+    
   });
 
 
@@ -303,7 +342,7 @@ var finalarray16=[];
 
 function button2016(){
   console.log("button 2016 was clicked");
-  console.log(stateAbbrev);
+  //console.log(stateAbbrev);
   if (stateAbbrev != undefined || stateAbbrev != null) {
     manstring=[];
     civdeaths=[];
@@ -323,15 +362,15 @@ function button2016(){
 
         });
 
-      
+
         for (var i=0;i<yearvalue.length;i++){
           manString += '<svg id="man' +i + '"';
           if(i>yearvalue.length){manString+="style='opacity:0;'";}
           manString += man;
           if(i%15 == 14){manString+="</br>";}
         }
-          document.getElementById('demop').innerHTML = "Number of Civilians in "+element.key+" Dead during 2016: "+ yearvalue.length.toString();
-          document.getElementById('demo').innerHTML = manString;
+        document.getElementById('demop').innerHTML = "Number of Civilians in "+element.key+" Dead during 2016: "+ yearvalue.length.toString();
+        document.getElementById('demo').innerHTML = manString;
       }
 
     })
@@ -362,7 +401,7 @@ function button2016(){
 
 function button2015(){
   console.log("button 2015 was clicked");
-  console.log(stateAbbrev);
+  //console.log(stateAbbrev);
   if (stateAbbrev != undefined || stateAbbrev != null) {
     manstring=[];
     civdeaths=[];
@@ -388,8 +427,8 @@ function button2015(){
           manString += man;
           if(i%15 == 14){manString+="</br>";}
         }
-          document.getElementById('demop').innerHTML = "Number of Civilians in "+element.key+" Dead during 2015: "+ yearvalue.length.toString();
-          document.getElementById('demo').innerHTML = manString;
+        document.getElementById('demop').innerHTML = "Number of Civilians in "+element.key+" Dead during 2015: "+ yearvalue.length.toString();
+        document.getElementById('demo').innerHTML = manString;
       }
 
     })
@@ -497,11 +536,12 @@ var pathGenerator = d3.geoPath().projection(projection);
 var states;
 
 var svg = d3.select("#armed_svg"),
-  margin = {top: 20, right: 20, bottom: 30, left: 150},
-  width = +svg.attr("width") - margin.left - margin.right,
-  height = +svg.attr("height") - margin.top - margin.bottom;
+margin = {top: 30, right: 20, bottom: 30, left: 130},
+width = +svg.attr("width") - margin.left - margin.right,
+height = +svg.attr("height") - margin.top - margin.bottom;
+
 var g = svg.append("g")
-     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 var tooltip = d3.select("body").append("div").attr("class", "toolTip");
 var x_scale = d3.scaleLinear().range([0, width]);
 var y_scale = d3.scaleBand().range([height, 0]).padding(0.1);
@@ -511,17 +551,17 @@ g.append("g")
 .call(d3.axisLeft(y_scale));
 
 g.append("g")
-  .attr("class", "x_axis")
-  .attr("transform", "translate(0," + height + ")")
-  .call(d3.axisBottom(x_scale).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
+.attr("class", "x_axis")
+.attr("transform", "translate(0," + height + ")")
+.call(d3.axisBottom(x_scale).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height+40]));
 
 var svg1 = d3.select("#gender_svg"),
-  margin = {top: 20, right: 20, bottom: 30, left: 150},
-  width = +svg1.attr("width") - margin.left - margin.right,
-  height = +svg1.attr("height") - margin.top - margin.bottom;
+margin = {top: 20, right: 20, bottom: 30, left: 150},
+width = +svg1.attr("width") - margin.left - margin.right,
+height = +svg1.attr("height") - margin.top - margin.bottom;
 
 var g_gender = svg1.append("g")
-     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 var x_scale_gender = d3.scaleLinear().range([0, width]);
 var y_scale_gender = d3.scaleBand().range([height, 0]).padding(0.1);
 
@@ -530,17 +570,17 @@ g_gender.append("g")
 .call(d3.axisLeft(y_scale_gender));
 
 g_gender.append("g")
-  .attr("class", "x_axis")
-  .attr("transform", "translate(0," + height + ")")
-  .call(d3.axisBottom(x_scale_gender).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
+.attr("class", "x_axis")
+.attr("transform", "translate(0," + height + ")")
+.call(d3.axisBottom(x_scale_gender).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
 
 var svg2 = d3.select("#race_svg"),
-  margin = {top: 20, right: 20, bottom: 30, left: 150},
-  width = +svg2.attr("width") - margin.left - margin.right,
-  height = +svg2.attr("height") - margin.top - margin.bottom;
+margin = {top: 20, right: 20, bottom: 30, left: 150},
+width = +svg2.attr("width") - margin.left - margin.right,
+height = +svg2.attr("height") - margin.top - margin.bottom;
 
 var g_race = svg2.append("g")
-     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 var x_scale_race = d3.scaleLinear().range([0, width]);
 var y_scale_race = d3.scaleBand().range([height, 0]).padding(0.1);
@@ -550,17 +590,17 @@ g_race.append("g")
 .call(d3.axisLeft(y_scale_race));
 
 g_race.append("g")
-  .attr("class", "x_axis")
-  .attr("transform", "translate(0," + height + ")")
-  .call(d3.axisBottom(x_scale_race).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
+.attr("class", "x_axis")
+.attr("transform", "translate(0," + height + ")")
+.call(d3.axisBottom(x_scale_race).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
 
 var svg3 = d3.select("#police_svg"),
-  margin = {top: 20, right: 20, bottom: 30, left: 150},
-  width = +svg3.attr("width") - margin.left - margin.right,
-  height = +svg3.attr("height") - margin.top - margin.bottom;
+margin = {top: 40, right: 40, bottom: 30, left: 170},
+width = +svg3.attr("width") - margin.left - margin.right,
+height = +svg3.attr("height") - margin.top - margin.bottom;
 
 var g_cause = svg3.append("g")
-     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 var x_scale_cause = d3.scaleLinear().range([0, width]);
 var y_scale_cause = d3.scaleBand().range([height, 0]).padding(0.1);
@@ -570,106 +610,87 @@ g_cause.append("g")
 .call(d3.axisLeft(y_scale_cause));
 
 g_cause.append("g")
-  .attr("class", "x_axis")
-  .attr("transform", "translate(0," + height + ")")
-  .call(d3.axisBottom(x_scale_cause).ticks(3).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
+.attr("class", "x_axis")
+.attr("transform", "translate(0," + height + ")")
+.call(d3.axisBottom(x_scale_cause).ticks(3).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
 
- function getCivInfoStates(stateAbbrev){
-  var chosenState;
-  var stateArray;
+function getCivInfoStates(stateAbbrev){
+ if($("#b2015").hasClass("selected")){
+   var chosenState = selectByStates.filter(function(value){return value.key=== stateAbbrev});
+   var stateArray = chosenState[0].values.filter(function(value){return value.date ==="15"});
+ }else{
+   var chosenState = selectByStates.filter(function(value){return value.key=== stateAbbrev});
+   var stateArray = chosenState[0].values.filter(function(value){return value.date ==="16"});
+ }
 
-   if($("#b2015").hasClass("selected")){
-    if (stateAbbrev == "NA15"){
-      chosenState = selectByStates;
-      console.log(chosenState);
-    }
-     else{
-      chosenState = selectByStates.filter(function(value){return value.key=== stateAbbrev});
-      console.log(chosenState);
-    }
-    
-     stateArray = chosenState[0].values.filter(function(value){return value.date ==="15"});
-   } else{
-    if (stateAbbrev == "NA16")
-      chosenState = selectByStates;
-     else 
-      chosenState = selectByStates.filter(function(value){return value.key=== stateAbbrev});
-
-     stateArray = chosenState[0].values.filter(function(value){return value.date ==="16"});
-   }
-
-  return stateArray;
+ return stateArray;
 }
-  function getPolInfoStates(stateAbbrev){
-    var chosenStatePol;
-    if($("#b2015").hasClass("selected")){
-      if (stateAbbrev == "NA15")
-        chosenStatePol = selectByStatespol;
-      else
-        chosenStatePol = selectByStatespol.filter(function(value){return value.key===stateAbbrev });
+function getPolInfoStates(stateAbbrev){
+  if($("#b2015").hasClass("selected")){
+    var chosenStatePol = selectByStatespol.filter(function(value){return value.key===stateAbbrev });
 
-      stateArrayPol = chosenStatePol[0].values.filter(function(value){return value.year ===2015});
-    }else{
-      if (stateAbbrev == "NA16")
-        chosenStatePol = selectByStatespol;
-      else
-        chosenStatePol = selectByStatespol.filter(function(value){return value.key===stateAbbrev });
+    //no states that match
+    if (chosenStatePol.length == 0)
+      return chosenStatePol;
+    var stateArrayPol = chosenStatePol[0].values.filter(function(value){return value.year ===2015});
+  } else {
+    var chosenStatePol = selectByStatespol.filter(function(value){return value.key===stateAbbrev });
 
-      stateArrayPol = chosenStatePol[0].values.filter(function(value){return value.year ===2016});
-    }
-    return stateArrayPol;
+    if (chosenStatePol.length == 0)
+      return chosenStatePol;
+    var stateArrayPol = chosenStatePol[0].values.filter(function(value){return value.year ===2016});
   }
+  return stateArrayPol;
+}
 
-  function drawCivGraph(stateAbbrev){
-    var data= getCivInfoStates(stateAbbrev);
+function drawCivGraph(stateAbbrev){
+  var data= (stateAbbrev == "NA15") ? selectYearCiv[0].values : (stateAbbrev == "NA16") ? selectYearCiv[1].values : getCivInfoStates(stateAbbrev);
 
-    var count_gun = data.filter(function(value){return value.armed==="gun"}).length;
-    var count_unarmed = data.filter(function(value){return value.armed==="unarmed"}).length;
-    var count_vehicle = data.filter(function(value){return value.armed==="vehicle"}).length;
-    var count_knife = data.filter(function(value){return value.armed==="knife"}).length;
-    var count_toy_weapon = data.filter(function(value){return value.armed==="toy weapon" }).length;
-    var count_undetermined = data.filter(function(value){return value.armed==="undetermined" }).length;
-    var count_other = data.filter(function(value){
-      if(value.armed==="gun" || value.armed==="unarmed" || value.armed==="vehicle" || value.armed ==="knife" || value.armed ==="toy weapon" || value.armed ==="undetermined"){
-        return false;
-      }
-      return true;
-    }).length;
-    console.log(count_other);
+  var count_gun = data.filter(function(value){return value.armed==="gun"}).length;
+  var count_unarmed = data.filter(function(value){return value.armed==="unarmed"}).length;
+  var count_vehicle = data.filter(function(value){return value.armed==="vehicle"}).length;
+  var count_knife = data.filter(function(value){return value.armed==="knife"}).length;
+  var count_toy_weapon = data.filter(function(value){return value.armed==="toy weapon" }).length;
+  var count_undetermined = data.filter(function(value){return value.armed==="undetermined" }).length;
+  var count_other = data.filter(function(value){
+    if(value.armed==="gun" || value.armed==="unarmed" || value.armed==="vehicle" || value.armed ==="knife" || value.armed ==="toy weapon" || value.armed ==="undetermined"){
+      return false;
+    }
+    return true;
+  }).length;
 
-    var counts_armed = [{"armed":"Gun","value":count_gun},{"armed":"Knife","value":count_knife}, {"armed":"Unarmed","value":count_unarmed},
-    {"armed":"Vehicle","value":count_vehicle}, {"armed":"Toy Weapon","value":count_toy_weapon}, {"armed":"Undetermined","value":count_undetermined}, {"armed":"Other", "value":count_other}];
-    console.log(counts_armed);
+  var counts_armed = [{"armed":"Gun","value":count_gun},{"armed":"Knife","value":count_knife}, {"armed":"Unarmed","value":count_unarmed},
+  {"armed":"Vehicle","value":count_vehicle}, {"armed":"Toy Weapon","value":count_toy_weapon}, {"armed":"Undetermined","value":count_undetermined}, {"armed":"Other", "value":count_other}];
 
 
-    x_scale.domain([0, d3.max(counts_armed, function(d) { return d.value; })]);
-    y_scale.domain(counts_armed.map(function(d) { return d.armed; }));
+  x_scale.domain([0, d3.max(counts_armed, function(d) { return d.value; })]);
+  y_scale.domain(counts_armed.map(function(d) { return d.armed; }));
 
-    var bars = g.selectAll(".bar")
-      .remove()
-      .exit()
-      .data(counts_armed)
+  var bars = g.selectAll(".bar")
+  .exit()
+  .remove()
+  .data(counts_armed)
 
-      bars.enter().append("rect")
-      .attr("class", "bar")
-      .attr("x", 0)
-      .attr("height", y_scale.bandwidth()/2)
-      .attr("y", function(d) { return y_scale(d.armed)+5; })
-      .attr("width", function(d) { return x_scale(d.value); })
-      .on("mousemove", function(d){
-          tooltip
-            .style("left", d3.event.pageX - 50 + "px")
-            .style("top", d3.event.pageY - 70 + "px")
-            .style("display", "inline-block")
-            .html((d.armed) + "<br>" + (d.value) + " cases");
-      })
-      .on("mouseout", function(d){ tooltip.style("display", "none");});
+  bars.enter().append("rect")
+  .attr("class", "bar")
+  .attr("x", 0)
+  .attr("height", y_scale.bandwidth()/3)
+  .attr("y", function(d) { return y_scale(d.armed)+10; })
+  .attr("width", function(d) { return x_scale(d.value); })
+  .on("mousemove", function(d){
+    tooltip
+    .style("left", d3.event.pageX - 50 + "px")
+    .style("top", d3.event.pageY - 70 + "px")
+    .style("display", "inline-block")
+    .html((d.armed) + "<br>" + (d.value) + " cases");
+  })
+  .on("mouseout", function(d){ tooltip.style("display", "none");});
 
-    g.select(".x_axis")
-      .call(d3.axisBottom(x_scale).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-svg.attr("height") - 20 - 30]));
+  g.select(".x_axis").transition().duration(300)
+  .call(d3.axisBottom(x_scale).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-svg.attr("height") - 20 - 30]));
 
-    g.select(".y_axis")
-      .call(d3.axisLeft(y_scale));
+  g.select(".y_axis")
+  .call(d3.axisLeft(y_scale));
 
      //Creating horizontal bar graph for gender
      var count_male = data.filter(function(value){return value.gender==="M"}).length;
@@ -681,116 +702,113 @@ g_cause.append("g")
      y_scale_gender.domain(counts_gender.map(function(d) { return d.gender; }));
 
      var bars_gender = g_gender.selectAll(".bar")
-       .remove()
-       .exit()
-       .data(counts_gender)
+     .remove()
+     .exit()
+     .data(counts_gender)
 
-       bars_gender.enter().append("rect")
-       .attr("class", "bar")
-       .attr("x", 0)
-       .attr("height", y_scale_gender.bandwidth()/2)
-       .attr("y", function(d) { return y_scale_gender(d.gender)+5; })
-       .attr("width", function(d) { return x_scale_gender(d.value); })
-       .on("mousemove", function(d){
-           tooltip
-             .style("left", d3.event.pageX - 50 + "px")
-             .style("top", d3.event.pageY - 70 + "px")
-             .style("display", "inline-block")
-             .html((d.gender) + "<br>" + (d.value) + " cases");
-       })
-       .on("mouseout", function(d){ tooltip.style("display", "none");});
+     bars_gender.enter().append("rect")
+     .attr("class", "bar")
+     .attr("x", 0)
+     .attr("height", y_scale_gender.bandwidth()/2)
+     .attr("y", function(d) { return y_scale_gender(d.gender)+5; })
+     .attr("width", function(d) { return x_scale_gender(d.value); })
+     .on("mousemove", function(d){
+       tooltip
+       .style("left", d3.event.pageX - 50 + "px")
+       .style("top", d3.event.pageY - 70 + "px")
+       .style("display", "inline-block")
+       .html((d.gender) + "<br>" + (d.value) + " cases");
+     })
+     .on("mouseout", function(d){ tooltip.style("display", "none");});
 
-     g_gender.select(".x_axis")
-       .call(d3.axisBottom(x_scale_gender).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-svg1.attr("height") - 20 - 30]));
+     g_gender.select(".x_axis").transition().duration(300)
+     .call(d3.axisBottom(x_scale_gender).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-svg1.attr("height") - 20 - 30]));
 
      g_gender.select(".y_axis")
-       .call(d3.axisLeft(y_scale_gender));
+     .call(d3.axisLeft(y_scale_gender));
 
-      var count_asian = data.filter(function(value){return value.race==="A"}).length;
-      var count_black = data.filter(function(value){return value.race==="B"}).length;
-      var count_hispanic = data.filter(function(value){return value.race==="H"}).length;
-      var count_native = data.filter(function(value){return value.race==="N"}).length;
-      var count_white = data.filter(function(value){return value.race==="W" }).length;
-      var count_other_race = data.filter(function(value){return value.race==="O"}).length;
+     var count_asian = data.filter(function(value){return value.race==="A"}).length;
+     var count_black = data.filter(function(value){return value.race==="B"}).length;
+     var count_hispanic = data.filter(function(value){return value.race==="H"}).length;
+     var count_native = data.filter(function(value){return value.race==="N"}).length;
+     var count_white = data.filter(function(value){return value.race==="W" }).length;
+     var count_other_race = data.filter(function(value){return value.race==="O"}).length;
 
-      var counts_race = [{"race":"Asian","value":count_asian},{"race":"Black","value":count_black}, {"race":"Hispanic","value":count_hispanic},
-      {"race":"Native American","value":count_native}, {"race":"White","value":count_white}, {"race":"Other","value":count_other_race}];
+     var counts_race = [{"race":"Asian","value":count_asian},{"race":"Black","value":count_black}, {"race":"Hispanic","value":count_hispanic},
+     {"race":"Native American","value":count_native}, {"race":"White","value":count_white}, {"race":"Other","value":count_other_race}];
 
       //Creating horizontal bar graph for race
       x_scale_race.domain([0, d3.max(counts_race, function(d) { return d.value; })]);
       y_scale_race.domain(counts_race.map(function(d) { return d.race; }));
 
       var bars_race = g_race.selectAll(".bar")
-        .remove()
-        .exit()
-        .data(counts_race)
+      .remove()
+      .exit()
+      .data(counts_race)
 
-        bars_race.enter().append("rect")
-        .attr("class", "bar")
-        .attr("x", 0)
-        .attr("height", y_scale_race.bandwidth()/2)
-        .attr("y", function(d) { return y_scale_race(d.race)+5; })
-        .attr("width", function(d) { return x_scale_race(d.value); })
-        .on("mousemove", function(d){
-            tooltip
-              .style("left", d3.event.pageX - 50 + "px")
-              .style("top", d3.event.pageY - 70 + "px")
-              .style("display", "inline-block")
-              .html((d.race) + "<br>" + (d.value) + " cases");
-        })
-        .on("mouseout", function(d){ tooltip.style("display", "none");});
+      bars_race.enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", 0)
+      .attr("height", y_scale_race.bandwidth()/2)
+      .attr("y", function(d) { return y_scale_race(d.race)+5; })
+      .attr("width", function(d) { return x_scale_race(d.value); })
+      .on("mousemove", function(d){
+        tooltip
+        .style("left", d3.event.pageX - 50 + "px")
+        .style("top", d3.event.pageY - 70 + "px")
+        .style("display", "inline-block")
+        .html((d.race) + "<br>" + (d.value) + " cases");
+      })
+      .on("mouseout", function(d){ tooltip.style("display", "none");});
 
-      g_race.select(".x_axis")
-        .call(d3.axisBottom(x_scale_race).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-svg2.attr("height") - 20 - 30]));
+      g_race.select(".x_axis").transition().duration(300)
+      .call(d3.axisBottom(x_scale_race).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-svg2.attr("height") - 20 - 30]));
 
       g_race.select(".y_axis")
-        .call(d3.axisLeft(y_scale_race));
+      .call(d3.axisLeft(y_scale_race));
 
 
-  }
-  function drawPolgraph(stateAbbrev){
-    var data = getPolInfoStates(stateAbbrev);
+    }
+    function drawPolgraph(stateAbbrev){
+      var data= (stateAbbrev == "NA15") ? selectYearPo[0].values : (stateAbbrev == "NA16") ? selectYearPo[1].values : getPolInfoStates(stateAbbrev);
 
-    var count_1 = data.filter(function(value){return value.cause_short==="9/11 related illness"}).length;
-    var count_2 = data.filter(function(value){return value.cause_short==="Accidental"}).length;
-    var count_3 = data.filter(function(value){return value.cause_short==="Aircraft accident"}).length;
-    var count_4 = data.filter(function(value){return value.cause_short==="Animal related"}).length;
-    var count_5 = data.filter(function(value){return value.cause_short==="Asphyxiation"}).length;
-    var count_6 = data.filter(function(value){return value.cause_short==="Assault"}).length;
-    var count_7 = data.filter(function(value){return value.cause_short==="Automobile accident"}).length;
-    var count_8 = data.filter(function(value){return value.cause_short==="Bomb"}).length;
-    var count_9 = data.filter(function(value){return value.cause_short==="Drowned"}).length;
-    var count_10 = data.filter(function(value){return value.cause_short==="Duty related illness"}).length;
-    var count_11 = data.filter(function(value){return value.cause_short==="Fall"}).length;
-    var count_12 = data.filter(function(value){return value.cause_short==="Fire"}).length;
-    var count_13 = data.filter(function(value){return value.cause_short==="Gunfire"}).length;
-    var count_14 = data.filter(function(value){return value.cause_short==="Gunfire (Accidental)"}).length;
-    var count_15 = data.filter(function(value){return value.cause_short==="Heart attack"}).length;
-    var count_16 = data.filter(function(value){return value.cause_short==="Heat exhaustion"}).length;
-    var count_17 = data.filter(function(value){return value.cause_short==="Poisoned"}).length;
-    var count_18 = data.filter(function(value){return value.cause_short==="Stabbed"}).length;
-    var count_19 = data.filter(function(value){return value.cause_short==="Struck by vehicle"}).length;
-    var count_20 = data.filter(function(value){return value.cause_short==="Training accident"}).length;
-    var count_21 = data.filter(function(value){return value.cause_short==="Vehicle pursuit"}).length;
-    var count_22 = data.filter(function(value){return value.cause_short==="Vehicular assault"}).length;
-    var count_23 = data.filter(function(value){return value.cause_short==="Weather/Natural disaster"}).length;
+      var count_1 = data.filter(function(value){return value.cause_short==="9/11 related illness"}).length;
+      var count_2 = data.filter(function(value){return value.cause_short==="Accidental"}).length;
+      var count_3 = data.filter(function(value){return value.cause_short==="Aircraft accident"}).length;
+      var count_4 = data.filter(function(value){return value.cause_short==="Animal related"}).length;
+      var count_5 = data.filter(function(value){return value.cause_short==="Asphyxiation"}).length;
+      var count_6 = data.filter(function(value){return value.cause_short==="Assault"}).length;
+      var count_7 = data.filter(function(value){return value.cause_short==="Automobile accident"}).length;
+      var count_8 = data.filter(function(value){return value.cause_short==="Bomb"}).length;
+      var count_9 = data.filter(function(value){return value.cause_short==="Drowned"}).length;
+      var count_10 = data.filter(function(value){return value.cause_short==="Duty related illness"}).length;
+      var count_11 = data.filter(function(value){return value.cause_short==="Fall"}).length;
+      var count_12 = data.filter(function(value){return value.cause_short==="Fire"}).length;
+      var count_13 = data.filter(function(value){return value.cause_short==="Gunfire"}).length;
+      var count_14 = data.filter(function(value){return value.cause_short==="Gunfire (Accidental)"}).length;
+      var count_15 = data.filter(function(value){return value.cause_short==="Heart attack"}).length;
+      var count_16 = data.filter(function(value){return value.cause_short==="Heat exhaustion"}).length;
+      var count_17 = data.filter(function(value){return value.cause_short==="Poisoned"}).length;
+      var count_18 = data.filter(function(value){return value.cause_short==="Stabbed"}).length;
+      var count_19 = data.filter(function(value){return value.cause_short==="Struck by vehicle"}).length;
+      var count_20 = data.filter(function(value){return value.cause_short==="Training accident"}).length;
+      var count_21 = data.filter(function(value){return value.cause_short==="Vehicle pursuit"}).length;
+      var count_22 = data.filter(function(value){return value.cause_short==="Vehicular assault"}).length;
+      var count_23 = data.filter(function(value){return value.cause_short==="Weather/Natural disaster"}).length;
 
-    var counts_cause = [{"cause_short":"9/11 related illness", "value":count_1}, {"cause_short":"Accidental", "value":count_2}, {"cause_short":"Aircraft accident", "value":count_3},
-    {"cause_short":"Animal related", "value":count_4}, {"cause_short":"Asphyxiation", "value":count_5}, {"cause_short":"Assault", "value":count_6},
-    {"cause_short":"Automobile accident", "value":count_7},{"cause_short":"Bomb", "value":count_8}, {"cause_short":"Drowned", "value":count_9},
-    {"cause_short":"Duty related illness", "value":count_10},{"cause_short":"Fall", "value":count_11}, {"cause_short":"Fire", "value":count_12},
-    {"cause_short":"Gunfire", "value":count_13}, {"cause_short":"Gunfire (Accidental)", "value":count_14},{"cause_short":"Heart attack", "value":count_15},
-    {"cause_short":"Heat exhaustion", "value":count_16},{"cause_short":"Poisoned", "value":count_17}, {"cause_short":"Stabbed", "value":count_18},
-    {"cause_short":"Struck by vehicle", "value":count_19},{"cause_short":"Training accident", "value":count_20},{"cause_short":"Vehicle pursuit", "value":count_21},
-    {"cause_short":"Vehicular assault", "value":count_22}, {"cause_short":"Weather/Natural disaster", "value":count_23}];
+      var counts_cause = [{"cause_short":"9/11 related illness", "value":count_1}, {"cause_short":"Accidental", "value":count_2}, {"cause_short":"Aircraft accident", "value":count_3},
+      {"cause_short":"Animal related", "value":count_4}, {"cause_short":"Asphyxiation", "value":count_5}, {"cause_short":"Assault", "value":count_6},
+      {"cause_short":"Automobile accident", "value":count_7},{"cause_short":"Bomb", "value":count_8}, {"cause_short":"Drowned", "value":count_9},
+      {"cause_short":"Duty related illness", "value":count_10},{"cause_short":"Fall", "value":count_11}, {"cause_short":"Fire", "value":count_12},
+      {"cause_short":"Gunfire", "value":count_13}, {"cause_short":"Gunfire (Accidental)", "value":count_14},{"cause_short":"Heart attack", "value":count_15},
+      {"cause_short":"Heat exhaustion", "value":count_16},{"cause_short":"Poisoned", "value":count_17}, {"cause_short":"Stabbed", "value":count_18},
+      {"cause_short":"Struck by vehicle", "value":count_19},{"cause_short":"Training accident", "value":count_20},{"cause_short":"Vehicle pursuit", "value":count_21},
+      {"cause_short":"Vehicular assault", "value":count_22}, {"cause_short":"Weather/Natural disaster", "value":count_23}];
 
-    x_scale_cause.domain([0, d3.max(counts_cause, function(d) { return d.value; })]);
- 
+      x_scale_cause.domain([0, d3.max(counts_cause, function(d) { return d.value; })]);
+      y_scale_cause.domain(counts_cause.map(function(d) { return d.cause_short; }));
 
-    y_scale_cause.domain(counts_cause.map(function(d) { return d.cause_short; }));
-
-    var bars_cause = 
-    g_cause.selectAll(".barP")
+      var bars_cause = g_cause.selectAll(".barP")
       .remove()
       .exit()
       .data(counts_cause)
@@ -798,28 +816,27 @@ g_cause.append("g")
       bars_cause.enter().append("rect")
       .attr("class", "barP")
       .attr("x", 0)
-      .attr("height", y_scale_cause.bandwidth())
-      .attr("y", function(d) { return y_scale_cause(d.cause_short); })
+      .attr("height", y_scale_cause.bandwidth()/2)
+      .attr("y", function(d) { return y_scale_cause(d.cause_short)+6; })
       .attr("width", function(d) { return x_scale_cause(d.value); })
       .on("mousemove", function(d){
-          tooltip
-            .style("left", d3.event.pageX - 50 + "px")
-            .style("top", d3.event.pageY - 70 + "px")
-            .style("display", "inline-block")
-            .html((d.cause_short) + "<br>" + (d.value) + " cases");
+        tooltip
+        .style("left", d3.event.pageX - 50 + "px")
+        .style("top", d3.event.pageY - 70 + "px")
+        .style("display", "inline-block")
+        .html((d.cause_short) + "<br>" + (d.value) + " cases");
       })
       .on("mouseout", function(d){ tooltip.style("display", "none");});
 
-    g_cause.select(".x_axis")
-      .call(d3.axisBottom(x_scale_cause).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-height]));
+      g_cause.select(".x_axis").transition().delay(200)
+      .call(d3.axisBottom(x_scale_cause).ticks(5).tickFormat(function(d) { return parseInt(d); }).tickSizeInner([-svg3.attr("height") - 20 - 30]));
 
-    g_cause.select(".y_axis")
+      g_cause.select(".y_axis")
       .call(d3.axisLeft(y_scale_cause));
-  }
+    }
 
 
-var stateAbbrev;
-
+    var stateAbbrev;
 
 //displays the map, fills in according to scale, adds legend and labels
 function showMap(id, scale, variable, stateCount, year, stateData) {
@@ -836,45 +853,38 @@ function showMap(id, scale, variable, stateCount, year, stateData) {
   .attr("width", 500)
   .attr("height", 400);
 
-  svg.append("text")
-  .attr("id", "title")
-  .attr("x", 130)
-  .attr("y", 50)
-  .style("font-size", "16px");
-
   var div = d3.select("body").append("div")
   .attr("class", "tooltip")
   .style("opacity", 0);
 
 //add legend
 svg.append("g")
-  .attr("class", "legendQuant")
-  .attr("transform", "translate(420,30)");
+.attr("class", "legendQuant")
+.attr("transform", "translate(420,30)");
 
 var legend = d3.legendColor()
-  .labelFormat(d3.format("d"))
-  .useClass(false)
-  .titleWidth(100)
-  .scale(scale);
+.labelFormat(d3.format("d"))
+.useClass(false)
+.titleWidth(100)
+.scale(scale);
 
 svg.select(".legendQuant").call(legend);
-  svg.append("text")
-  .attr("id", "title")
-  .attr("x", 420)
-  .attr("y", 20)
-  .text("Legend (Deaths)");
+svg.append("text")
+.attr("x", 420)
+.attr("y", 20)
+.text("Legend (Deaths)");
 
-
-// drawCivGraph("NA15"); //use NA15 to indicate no state was selected
-// drawPolgraph("NA15");
+drawCivGraph("NA15");
+drawPolgraph("NA15");
 
   //titles
-  var text = (variable == "PoliceOfficer") ? "Police Officer Deaths " + year : "Civilian Deaths " + year;
+  var text = (variable == "PoliceOfficer") ? "Police Officer Deaths " : "Civilian Deaths";
 
-  svg.select("#title")
-      .text(text)
-      .transition()
-      .duration(200);
+  svg.append("text")
+  .attr("x", 10)
+  .attr("y", 30)
+  .style("font-size","25px")
+      .text(text);
 
   projection.fitExtent([[0,0], [svg.attr("width") - 130, svg.attr("height")]], states);
   pathGenerator = d3.geoPath().projection(projection);
@@ -906,34 +916,32 @@ svg.select(".legendQuant").call(legend);
     return pathGenerator(state);
   })
   .on("click", function (state){
-  currentState = d3.select(this);
-  currentStateID = state.id;
+    currentState = d3.select(this);
+    currentStateID = state.id;
 
-  if (!clicked){
+    if (!clicked){
       orgColor = currentState.style("fill");
       currentState.transition().duration(200).style("fill","rgb(169, 169, 169)");
 
       var currID = state.id;
       stateData.forEach(function(d){
-         if (currID == d.key)
-            stateAbbrev = d.value.abbreviation;
-      });
+       if (currID == d.key)
+        stateAbbrev = d.value.abbreviation;
+    });
       civpolcount(stateAbbrev);
 
-       clicked = true;
-       oldStateID = state.id;
-       oldState = currentState;
+      clicked = true;
+      oldStateID = state.id;
+      oldState = currentState;
 
-
-       //call get info states passing in stateabbrev here
-       if(id=="#mapCiv"){
+      if(id=="#mapCiv"){
         drawCivGraph(stateAbbrev);
-       }
-       else {
+      }
+      else {
         drawPolgraph(stateAbbrev);
-       } 
-  }
-  else {  //something has been clicked already
+      } 
+    }
+    else {  
 
     //check if you are selecting the old state
     if (oldStateID == currentStateID){
@@ -941,55 +949,61 @@ svg.select(".legendQuant").call(legend);
       currentState.transition().duration(200).style("fill", orgColor);
       clicked = false;
 
-      if ($("#b2015").hasClass("selected")){
-          drawCivGraph("NA15"); //use NA15 to indicate no state was selected
-          drawPolgraph("NA15");
+      if (id == "#map" && $("#b2015").hasClass("selected")){
+        drawPolgraph("NA15");
       }
-      else{
-          drawCivGraph("NA16");
-          drawPolgraph("NA16");
+      else if (id == "#map" && $("#b2016").hasClass("selected")){
+        drawPolgraph("NA16");
       }
+      else if (id == "#mapCiv" && $("#b2015").hasClass("selected")){
 
-      //this is when nothing is selected on the map
+        drawCivGraph("NA15");
+      }
+      else{               
+       drawCivGraph("NA16");
+    }
+
   }
-    else {
-        oldState.style("fill", orgColor);
+  else {
+    oldState.style("fill", orgColor);
 
-        orgColor = currentState.style("fill");
+    orgColor = currentState.style("fill");
 
-        currentState
-        .transition().duration(200).style("fill","rgb(169, 169, 169)");
-        var currID = state.id;
+    currentState
+    .transition().duration(200).style("fill","rgb(169, 169, 169)");
+    var currID = state.id;
 
-        stateData.forEach(function(d){
-           if (currID == d.key)
-            stateAbbrev = d.value.abbreviation;
-            civpolcount(stateAbbrev);
+    stateData.forEach(function(d){
+     if (currID == d.key)
+      stateAbbrev = d.value.abbreviation;
+    civpolcount(stateAbbrev);
 
-        });
-         console.log(stateAbbrev);
-         clicked = true;
-         oldState = currentState;
-         oldStateID = state.id;
+  });
+    console.log(stateAbbrev);
+    d3.select(".stateYear")
+      .text(stateAbbrev);
+    clicked = true;
+    oldState = currentState;
+    oldStateID = state.id;
 
           //call get info states passing in stateabbrev here
-       if(id=="#mapCiv"){
-        drawCivGraph(stateAbbrev);
-       }
-       else {
-        drawPolgraph(stateAbbrev);
-       } 
-    }
-  }
+          if(id=="#mapCiv"){
+            drawCivGraph(stateAbbrev);
+          }
+          else {
+            drawPolgraph(stateAbbrev);
+          } 
+        }
+      }
 
 
-  })
-  .on("mouseover", function (state) {
-    d3.select(this)
-    .attr("stroke","black")
+    })
+.on("mouseover", function (state) {
+  d3.select(this)
+  .attr("stroke","black")
 
-    var state;
-    var count;
+  var state;
+  var count;
 
     //get state name and info
     var id = state.id;
@@ -1017,14 +1031,14 @@ svg.select(".legendQuant").call(legend);
     .style("left", (d3.event.pageX) + "px")
     .style("top", (d3.event.pageY - 28) + "px");
   })
-  .on("mouseout",function(state){
-    div.transition()
-    .duration(200)
-    .style("opacity", 0);
+.on("mouseout",function(state){
+  div.transition()
+  .duration(200)
+  .style("opacity", 0);
 
-    d3.selectAll("path")
-    .attr("stroke", "white")
-  });
+  d3.selectAll("path")
+  .attr("stroke", "white")
+});
 }
 
 //scales the @param variable graph to @param scale in @param year with @param scale
@@ -1035,9 +1049,9 @@ function scaleTo(map, variable, scale, year){
   var text = (variable == "police") ? "Police Officer Deaths " + year : "Civilian Deaths " + year;
 
   svg.select("#title")
-      .text(text)
-      .transition()
-      .duration(200);
+  .text(text)
+  .transition()
+  .duration(200);
 
   //find count for specific variable and year
   var count = getCount(variable,year);
@@ -1059,8 +1073,8 @@ function scaleTo(map, variable, scale, year){
       }
     }
   })
-.on("mouseover", function (state){
-  d3.select(this)
+  .on("mouseover", function (state){
+    d3.select(this)
     .attr("stroke","black")
 
     var state;
@@ -1107,7 +1121,7 @@ function scaleTo(map, variable, scale, year){
 function getCount(vari, year){
   if (year == 2015){
     if (vari == "police")
-        return policeCount2015;
+      return policeCount2015;
     else
       return civCount2015;
   }
@@ -1132,8 +1146,10 @@ $("#b2015").click(function(){
     $(this).addClass("selected");
     $("#b2016").removeClass("selected");
   }
-
+  drawCivGraph("NA15");
+  drawPolgraph("NA15");
   //populate the map
+
   scaleTo("#map","police", scalePolice2015, 2015);
 
   scaleTo("#mapCiv","civilian", scaleCiv2015, 2015);
@@ -1141,18 +1157,19 @@ $("#b2015").click(function(){
 });
 
 $("#b2016").click(function(){
-if ($(this).hasClass("selected")){
+  if ($(this).hasClass("selected")){
     $("#b2015").removeClass("selected");
   }
   else{
     $(this).addClass("selected");
     $("#b2015").removeClass("selected");
   }
-
+  drawCivGraph("NA16");
+  drawPolgraph("NA16");
   //populate the map
-    scaleTo("#map","police", scalePolice2015, 2016);
+  scaleTo("#map","police", scalePolice2015, 2016);
   
-    scaleTo("#mapCiv","civilian", scaleCiv2015, 2016);
+  scaleTo("#mapCiv","civilian", scaleCiv2015, 2016);
   
 });
 
